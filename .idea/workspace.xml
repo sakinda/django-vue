@@ -162,6 +162,9 @@
       <replace>;</replace>
     </replaceStrings>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -192,6 +195,7 @@
     <option name="width" value="2762" />
     <option name="height" value="1780" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -427,12 +431,12 @@
       <workItem from="1619785578229" duration="1628000" />
       <workItem from="1619790498853" duration="24220000" />
       <workItem from="1620636415613" duration="22651000" />
-      <workItem from="1621069013184" duration="4391000" />
+      <workItem from="1621069013184" duration="5018000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="592212000" />
+    <option name="totallyTimeSpent" value="592839000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1577" height="1016" extended-state="6" />
@@ -441,7 +445,7 @@
       <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.11965812" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" order="0" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="1" visible="true" weight="0.18397291" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="1" visible="true" weight="0.1841808" />
       <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="3" />
       <window_info anchor="bottom" id="Python Console" order="4" weight="0.3295711" />
