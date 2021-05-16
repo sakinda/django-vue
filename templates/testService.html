@@ -1,0 +1,1383 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+{#    <link rel="stylesheet" type="text/css" href="../static/style.css">#}
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <title>Document</title>
+</head>
+
+<script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>
+
+{#<style>#}
+{#    input[type=button], button, select, textarea {#}
+{#        appearance: none;#}
+{#        -webkit-appearance: none;#}
+{#        -moz-appearance: none;#}
+{#        outline: none;#}
+{#        border: none;#}
+{#        -webkit-tap-highlight-color: transparent;#}
+{#    }#}
+{##}
+{#    *{#}
+{#        -webkit-tap-highlight-color: transparent;#}
+{#    }#}
+{##}
+{#    input[type=button] .add:active{#}
+{#        opacity: .7;#}
+        {#background-color: #fff;#}
+{#    }#}
+{##}
+{#    .is_hidden{#}
+{#        display: none;#}
+{#    }#}
+{##}
+{#    body {#}
+{#        margin: 0;#}
+{#        padding: 0;#}
+{#        background-color: #f7f7f7;#}
+{#        user-select:none;#}
+{#        -webkit-touch-callout:none;#}
+{#        -webkit-user-select:none;#}
+{#        -khtml-user-select:none;#}
+{#        -moz-user-select:none;#}
+{#        -ms-user-select:none;#}
+{#        user-select:none#}
+{#    }#}
+{##}
+{#    input[type='radio'] {#}
+{#        display: none;#}
+{#    }#}
+{##}
+{#    .note_ball {#}
+{#        position: fixed;#}
+{#        display: flex;#}
+{#        justify-content: center;#}
+{#        align-items: center;#}
+{#        bottom: 75px;#}
+{#        left: 5px;#}
+{#        z-index: 11;#}
+{#        height: 50px;#}
+{#        width: 50px;#}
+{#        border-radius: 25px;#}
+{#        background-color: #B2DFDB;#}
+{#        text-align: center;#}
+{#        transition: 0.3s;#}
+{#    }#}
+{##}
+{#    .long {#}
+{#        height: 580px;#}
+{#        width: 100px;#}
+{#        border-radius: 10px;#}
+{#    }#}
+{##}
+{#    .ball_up{#}
+{#        bottom: calc(75px + (100% - 60px - 70px) - 40px );#}
+        {#transform: translateY(-550px);#}
+{#        height: 30px;#}
+{#        width: 60px;#}
+{#        border-radius: 5px;#}
+        {#line-height: 5px;#}
+        {#vertical-align: center;#}
+{#    }#}
+{##}
+{#    .info {#}
+{#        position: fixed;#}
+{#        top: 0px;#}
+{#        display: flex;#}
+{#        color: #fff;#}
+{#        background-color: #004D40;#}
+{#        width: 100%;#}
+{#        height: 60px;#}
+{#        z-index: 9;#}
+{#        box-shadow: 1px 5px 5px #aaa;#}
+{#    }#}
+{##}
+{#    .info #table_num {#}
+{#        width: 35%;#}
+{#        display: flex;#}
+{#        justify-content: start;#}
+{#        align-items: center;#}
+{#    }#}
+{##}
+{#    .info #table_num input {#}
+{#        height: 50%;#}
+{#        width: 45%;#}
+{#        font-size: 20px;#}
+{#    }#}
+{##}
+{#    .info #client_quantity {#}
+{#        width: 30%;#}
+{#        display: flex;#}
+{#        justify-content: start;#}
+{#        align-items: center;#}
+{#    }#}
+{##}
+{#    .info #client_quantity input {#}
+{#        height: 50%;#}
+{#        width: 30%;#}
+{#        font-size: 20px;#}
+{#    }#}
+{##}
+{#    .info #client_num {#}
+{#        width: 35%;#}
+{#        display: flex;#}
+{#        justify-content: start;#}
+{#        align-items: center;#}
+{#    }#}
+{##}
+{#    .info #client_num div {#}
+{#        width: 65%;#}
+{#        display: flex;#}
+{#        justify-content: space-between;#}
+{#        align-items: center;#}
+{#    }#}
+{##}
+{#    .info #client_num button {#}
+{#        width: 30px;#}
+{#        height: 30px;#}
+{#    }#}
+{##}
+{#    /* ***************以上为 顶部info************* */#}
+{##}
+{#    .main {#}
+{#        margin-top: 15px;#}
+{#        position: relative;#}
+{#        top: 50px;#}
+{#        background-color: #fff;#}
+{#        display: grid;#}
+{#        grid-template-columns: 1fr 4fr;#}
+{#    }#}
+{##}
+{#    .main .category {#}
+{##}
+{#        padding-left: 5px;#}
+{#        display: grid;#}
+{#        grid-template-columns: 1fr;#}
+{#        grid-auto-rows: minmax(40px, auto);#}
+{#        font-size: 15px;#}
+{#        height: 40px;#}
+{#    }#}
+{##}
+{#    .category .p-label {#}
+{#        width: 100%;#}
+{#        background-color: #eee;#}
+{#        border-top: 1px solid #ddd;#}
+        {#border: 1px solid #000;#}
+{#    }#}
+{##}
+    {#.category .p-label:first-child{#}
+    {#    background-color: #fff;#}
+{#    { #}#}
+{##}
+{#    .category label:first-child {#}
+{#        background-color: #fff;#}
+{#    }#}
+{##}
+{#    input[type='radio'] + label::before {#}
+{#        content: '';#}
+{#        display: inline-block;#}
+{#        box-sizing: border-box;#}
+{#        width: 6px;#}
+{#        height: 100%;#}
+{#        border: 1px solid #eee;#}
+{#        vertical-align: middle;#}
+{#        background-color: #eee;#}
+{#    }#}
+{##}
+{#    input[type='radio']:checked + label::before {#}
+{#        content: '';#}
+{#        display: inline-block;#}
+{#        box-sizing: border-box;#}
+{#        width: 6px;#}
+{#        height: 100%;#}
+{#        border: 3px solid #ff4848;#}
+{#        background-color: #fff;#}
+{#        vertical-align: middle;#}
+{#    }#}
+{##}
+{#    input[type='radio']:checked + label {#}
+{#        background-color: #fff;#}
+{#    }#}
+{##}
+{#    .main .category p {#}
+{#        word-break: break-all;#}
+{#    }#}
+{##}
+{#    .dish_container{#}
+{#        display: flex;#}
+{#        flex-direction: column;#}
+{#        width: 100%;#}
+{#        margin-bottom: 70px;#}
+        {#height: 170px;#}
+{#    }#}
+{##}
+{#    .dish_container .dish{#}
+{#        padding: 0px 10px;#}
+        {#margin-top: 20px;#}
+{#        margin-top: 20px;#}
+{#        border-bottom: 1px solid #eee;#}
+{#        display: flex;#}
+{#        flex-direction: row;#}
+{#        align-content: start;#}
+{#        align-items: center;#}
+{#        justify-content: space-evenly;#}
+{#        line-height: 0px;#}
+{#    }#}
+{##}
+{#    .dish_container .dish_detail{#}
+{#        display: flex;#}
+{#        flex-direction: column;#}
+{#        width: 85%;#}
+{##}
+{#    }#}
+{##}
+{#    .dish .check{#}
+{#        width: 15%;#}
+{#    }#}
+{##}
+{##}
+{#    .dish_container .first_line{#}
+{#        display: flex;#}
+{#        flex-direction: row;#}
+{#        justify-content: stretch;#}
+{#        align-items: center;#}
+{#        height: 20px;#}
+{#    }#}
+{##}
+{#    .dish_container .dish_name{#}
+{#        width: 55%;#}
+{#        font-weight: bolder;#}
+{#    }#}
+{##}
+{#    .dish_container .dish_price{#}
+{#        color: #ff4848;#}
+{#    }#}
+{##}
+{#    .dish_container span{#}
+{#        margin-left: 30px;#}
+{#    }#}
+{##}
+{#    .dish_container .ordered_Q{#}
+{#        margin-left: 10px;#}
+        {#color: #ff4848;#}
+{#    }#}
+{##}
+{#    .dish_container .second_line{#}
+{#        display: flex;#}
+{#        flex-direction: row;#}
+{#        justify-content: space-between;#}
+{#        align-items: center;#}
+{#        height: 40px;#}
+{#    }#}
+{##}
+{#    .dish_container .quantity{#}
+{#        display: flex;#}
+{#        flex-direction: row;#}
+{#        justify-content: space-evenly;#}
+{#        align-items: center;#}
+{#    }#}
+{##}
+{#    .dish_container .quantity .add{#}
+{#        width: 30px;#}
+{#        height: 30px;#}
+{#        border-radius: 15px;#}
+{#        border: 1px solid #3ada3a;#}
+{#        background-color: #3ada3a;#}
+{#        color: #fff;#}
+{#    }#}
+{##}
+{##}
+{#    .dish_container .quantity .minus{#}
+{#        width: 30px;#}
+{#        height: 30px;#}
+{#        border-radius: 15px;#}
+{#        border: 1px solid #3ada3a;#}
+{#        background-color: #fff;#}
+{#        color: #3ada3a;#}
+{#    }#}
+{##}
+{#    .dish_container #dish_quantity{#}
+{#        width: 35px;#}
+{#        height: 25px;#}
+{#        margin: 0px 5px;#}
+{#        text-align: center;#}
+{#    }#}
+{##}
+{#    .nav {#}
+{#        position: fixed;#}
+{#        bottom: 0px;#}
+{#        background-color: #B2DFDB;#}
+{#        width: 100%;#}
+{#        height: 70px;#}
+{#        z-index: 9;#}
+{#        box-shadow: 0px -1px #eee;#}
+{#    }#}
+{##}
+{#    /* 以下为ticket_list */#}
+{#    .outer2{#}
+{#        margin-bottom: 100px;#}
+{#        padding-left: 10px;#}
+{#        padding-top: 40px;#}
+{#        position: fixed;#}
+{#        top: calc(100% - 70px);#}
+{#        z-index:8;#}
+{#        height: calc(100% - 70px);#}
+{#        width: 100%;#}
+{#        background-color: #fff;#}
+{#        transition: 0.3s;#}
+{#        display: flex;#}
+{#        flex-direction: column;#}
+{#        overflow-y:auto;#}
+{#    }#}
+{##}
+{#    .to_front{#}
+{#        top: 60px;#}
+{#        z-index: 10;#}
+{#    }#}
+{##}
+{#    #ordered_list{#}
+{#        width: 95%;#}
+{#        display: flex;#}
+{#        flex-direction: column;#}
+{#        justify-content: space-between;#}
+{#        font-size: 25px;#}
+{#        flex-shrink: 0;#}
+{#    }#}
+{##}
+{#    #ordered_list .order{#}
+{#        width: 80%;#}
+{#        padding: 5px 0px;#}
+{#        display: flex;#}
+{#        flex-direction: row;#}
+{#        justify-content: space-between;#}
+{#        align-items: center;#}
+{#        border-bottom: 1px solid #eee;#}
+{#    }#}
+{##}
+{#    #ordered_list .order_container{#}
+{#        display: flex;#}
+{#        flex-direction: row;#}
+{#        width: 100%;#}
+{#        align-items: center;#}
+{#    }#}
+{##}
+{#    #ordered_list .order_container input{#}
+{#        border: 1px solid #ddd;#}
+{#        width: 25px;#}
+{#        height: 25px;#}
+{#    }#}
+{##}
+{#    #ordered_list .order .dish_name{#}
+{#        flex-basis: 40%;#}
+{#    }#}
+{##}
+{#    #ordered_list .order .dish_quantity{#}
+{#        border: 1px solid #eee;#}
+{#        text-align: center;#}
+{#        width: 25px;#}
+{#        height: 25px;#}
+{#        font-size: 20px;#}
+{#    }#}
+{##}
+{#    #ordered_list .order .dish_note{#}
+{#        flex-basis: 30%;#}
+{#        font-size: 15px;#}
+{#    }#}
+{##}
+{#    .outer2 .note{#}
+{#        margin-top: 20px;#}
+{#        width: 95%;#}
+{#        display: flex;#}
+{#        flex-direction: row;#}
+{#        flex-wrap: wrap;#}
+{#        justify-content: space-between;#}
+{#    }#}
+{##}
+{#    .outer2 .note p{#}
+{#        flex-basis: max-content;#}
+{#        border: 1px solid #ddd;#}
+{#        margin-left: 5px;#}
+{#        margin-top: -10px;#}
+{#    }#}
+{##}
+{#    .outer2 .note2{#}
+{#        color: red;#}
+{#    }#}
+{##}
+{#    .outer2 .note3{#}
+{#        color: green;#}
+{#    }#}
+{##}
+{#    .outer2 .note4{#}
+{#        color: blue;#}
+{#    }#}
+{##}
+{#    .outer2 .note5{#}
+{#        color: darkorange;#}
+{#    }#}
+{##}
+{#    .outer2 .note6{#}
+{#        color: purple;#}
+{#    }#}
+{##}
+{#    #order_submit{#}
+{#        flex-shrink: 1;#}
+{#        display: flex;#}
+{#        flex-direction: row;#}
+{#        justify-content: space-around;#}
+{#    }#}
+{##}
+{#    #order_submit p:first-child{#}
+{#        border: 1px solid green;#}
+{#        background-color: green;#}
+{#        color: #fff;#}
+{#        width: 50px;#}
+{#        border-radius: 10px;#}
+{#        line-height: 40px;#}
+{#        text-align: center;#}
+{#        flex-basis: 30%;#}
+{#    }#}
+{##}
+{#    #order_submit p:last-child{#}
+{#        border: 1px solid red;#}
+{#        background-color: red;#}
+{#        color: #fff;#}
+{#        width: 50px;#}
+{#        border-radius: 10px;#}
+{#        line-height: 40px;#}
+{#        text-align: center;#}
+{#        flex-basis: 30%;#}
+{#    }#}
+{##}
+{#</style>#}
+
+<!-- 获取URL参数 -->
+<script>
+    (function ($) {
+        $.getUrlParam = function (name) {
+            alert(window.location)
+            var reg = new RegExp(name + "=*.?");
+            var r = window.location.match(reg);
+            if (r != null) return unescape(r[2]);
+            return null;
+        }
+    })(jQuery);
+</script>
+
+<!-- 禁止缩放 -->
+<script>
+    function antiZoom() {
+        document.addEventListener('touchstart',function (event) {
+          if(event.touches.length>1){
+            event.preventDefault();
+          }
+        });
+        var lastTouchEnd=0;
+        document.addEventListener('touchend',function (event) {
+          var now=(new Date()).getTime();
+          if(now-lastTouchEnd<=500){
+            event.preventDefault();
+          }
+          lastTouchEnd=now;
+        },false);
+        document.addEventListener('gesturestart', function (event) {
+          event.preventDefault();
+        });
+    }
+</script>
+
+<!-- 获取桌号 -->
+<script>
+    function getTableNum() {
+        {#var table = $.getUrlParam('table');#}
+        {#alert(table)#}
+        var Re = new RegExp("table=([0-9]*)")
+        var stringt = JSON.stringify(window.location)
+        console.log(stringt)
+        stringT = Re.exec(stringt)
+        {#alert(RegExp.$1)#}
+        var t = stringT[0].split("=")
+        //$("#input_table_num").text(t[1]);  // 旧方法
+        //var tablenumber = $("#input_table_num").text()  // 旧方法
+        $("#table_num p:nth-child(2)").text(t[1]);
+        //$("#table_num p:nth-child(2)").attr('id','123123123')
+        var tablenumber = $("#table_num p:nth-child(2)").text()
+        return tablenumber
+    }
+</script>
+
+<!-- 获取桌号（旧） -->
+<script>
+    $(document).ready(function () {
+        {#var table = $.getUrlParam('table');#}
+        {##}
+        {#alert(table)#}
+        {#var Re = new RegExp("table=");#}
+        {#var table = Re.exec("cdbbdbsbz");#}
+        {#alert(typeof(toString(window.location)))#}
+
+        {#var Re = new RegExp("table=([0-9]*)")#}
+        {#var stringt = JSON.stringify(window.location)#}
+        {#console.log(stringt)#}
+        {#stringT = Re.exec(stringt)#}
+        {#alert(RegExp.$1)#}
+        {#alert(stringT)#}
+        {#var t = stringT[0].split("=")#}
+        {#$("#input_table_num").text(t[1]);#}
+    });
+</script>
+
+<!-- delete_order_quantity请求 -->
+<script>
+    function deleteOrder(order_id) {
+        $.ajax({
+            url: '/testpatch/' + order_id + '/',
+            type: 'DELETE',
+            success: function (data) {
+                getTicketDetail()
+                getOrderPage()
+            }
+        })
+    }
+</script>
+
+<!-- patch_order_quantity请求 -->
+<script>
+    function patchOrder(order_id, quantity) {
+        $.ajax({
+            url: '/testpatch/' + order_id + '/',
+            type: 'PATCH',
+            data:{"quantity": quantity},
+            success: function (data) {
+                getTicketDetail()
+                getOrderPage()
+            }
+        })
+    }
+</script>
+
+<!-- 测试发送create_order请求-->
+<script>
+    function create(order) {
+        $.ajax({
+            url: '/testcreate/',
+            type: 'post',
+            data: {"order_id": order.order_id,
+                "order_time": order.order_time,
+                "quantity": order.quantity,
+                "code": order.code,
+                "tid": order.tid,
+                "o_note": order.o_note
+            },
+            success: function (data) {
+                //alert("添加成功")
+                getOrderPage()
+            }
+        })
+    }
+</script>
+
+<!-- 测试发送create_table请求-->
+<script>
+    function createTable(ticket) {
+        $.ajax({
+            url: '/testcreatetable/',
+            type: 'post',
+            data: {"ticket_id": ticket.ticket_id,
+                "ticket_time": ticket.ticket_time,
+                "table_num": ticket.table_num
+            },
+            success: function (data) {
+                alert("添加新桌成功")
+                $("#table_num p:nth-child(2)").attr('id', ticket.ticket_id)
+                $('.second_line .quantity').children().each(function (i, n) {
+                    if($(n).hasClass('no_hidden')){
+                        {#$(n).attr('id')#}
+                        {#alert($(n).text())#}
+                        {#note_total += parseInt($(n).attr('id'))#}
+                        var date = new Date()
+                        var order_data = {}
+
+                        order_data.order_id = "D" + date.getTime().toString()  //订单号
+                        order_data.order_time = date.getFullYear().toString()+
+                            (((date.getMonth()+1).toString().length<2) ? "0" +(date.getMonth()+1).toString() : (date.getMonth()+1).toString()) +
+                            date .getDate().toString() +
+                            (((date.getHours()).toString().length<2) ? "0" + date.getHours().toString() : date.getHours().toString()) +
+                            (((date.getMinutes()).toString().length<2) ? "0" + date.getMinutes().toString() : date.getMinutes().toString()) +
+                            (((date.getSeconds()).toString().length<2) ? "0" + date.getSeconds().toString() : date.getSeconds().toString())
+                          //下单时间
+                        order_data.quantity = n.value  // 菜的数量
+                        order_data.code = $(n).parent().parent().siblings().children('div').attr('id') //菜的code
+                        order_data.o_note = "无备注";
+                        order_data.tid = $("#table_num p:nth-child(2)").attr('id')
+                        console.log(order_data)
+                        console.log('发送一个ajax')
+                        create(order_data)
+                    }
+                    //alert("添加成功")
+                })
+            }
+        })
+    }
+</script>
+
+<!-- 测试发送create请求-->
+<script>
+    $(document).ready(function () {
+        $(document).on('click','#confirm', function () {
+            if($("#table_num p:nth-child(2)").attr('id') == "input_table_num"){
+                // alert("需要新开一张桌")
+                var date = new Date()
+                var ticket_data = {}
+                ticket_data.ticket_id = "T" + date.getTime().toString();
+                ticket_data.ticket_time = date.getFullYear().toString()+
+                            (((date.getMonth()+1).toString().length<2) ? "0" +(date.getMonth()+1).toString() : (date.getMonth()+1).toString()) +
+                            date .getDate().toString() +
+                            (((date.getHours()).toString().length<2) ? "0" + date.getHours().toString() : date.getHours().toString()) +
+                            (((date.getMinutes()).toString().length<2) ? "0" + date.getMinutes().toString() : date.getMinutes().toString()) +
+                            (((date.getSeconds()).toString().length<2) ? "0" + date.getSeconds().toString() : date.getSeconds().toString());
+                ticket_data.table_num = $("#table_num p:nth-child(2)").text();
+                createTable(ticket_data)
+            }
+            else{
+                $('.second_line .quantity').children().each(function (i, n) {
+                    if($(n).hasClass('no_hidden')){
+                        {#$(n).attr('id')#}
+                        {#alert($(n).text())#}
+                        {#note_total += parseInt($(n).attr('id'))#}
+                        var date = new Date()
+                        var order_data = {}
+
+                        // 获取 单个 order 的各种详情（数量、代码、桌号、下单时间、备注）//////////////////////////////
+                        {#console.log("D" + date.getTime().toString())  //订单号#}
+                        {#console.log(date.getFullYear().toString()+#}
+                        {#    (((date.getMonth()+1).toString().length<2) ? "0" +(date.getMonth()+1).toString() : (date.getMonth()+1).toString()) +#}
+                        {#    date .getDate().toString() +#}
+                        {#    (((date.getHours()).toString().length<2) ? "0" + date.getHours().toString() : date.getHours().toString()) +#}
+                        {#    (((date.getMinutes()).toString().length<2) ? "0" + date.getMinutes().toString() : date.getMinutes().toString()) +#}
+                        {#    (((date.getSeconds()).toString().length<2) ? "0" + date.getSeconds().toString() : date.getSeconds().toString())#}
+                        {#)  //下单时间#}
+                        {#console.log(n.value)  // 菜的数量#}
+                        {#console.log($(n).parent().parent().siblings().children('div').attr('id')) //菜的code#}
+                        // 获取 单个 order 的各种详情（数量、代码、桌号、下单时间、备注） /////////////////////////////
+
+                        order_data.order_id = "D" + date.getTime().toString()  //订单号
+                        order_data.order_time = date.getFullYear().toString()+
+                            (((date.getMonth()+1).toString().length<2) ? "0" +(date.getMonth()+1).toString() : (date.getMonth()+1).toString()) +
+                            date .getDate().toString() +
+                            (((date.getHours()).toString().length<2) ? "0" + date.getHours().toString() : date.getHours().toString()) +
+                            (((date.getMinutes()).toString().length<2) ? "0" + date.getMinutes().toString() : date.getMinutes().toString()) +
+                            (((date.getSeconds()).toString().length<2) ? "0" + date.getSeconds().toString() : date.getSeconds().toString())
+                          //下单时间
+                        order_data.quantity = n.value  // 菜的数量
+                        order_data.code = $(n).parent().parent().siblings().children('div').attr('id') //菜的code
+                        order_data.o_note = "无备注";
+                        order_data.tid = $("#table_num p:nth-child(2)").attr('id')
+                        console.log(order_data)
+                        console.log('发送一个ajax')
+                        create(order_data)
+
+                    }
+                    // alert("添加成功")
+                })
+            }
+        })
+    });
+</script>
+
+<!-- 测试发送patch请求 -->
+<script>
+    $(document).ready(function () {
+        $('#order_submit p:first').on('click', function () {
+            {#var note_total = 0#}
+            {#getNoteTotal(note_total)#}
+
+            // 修改菜品数量，或者 删除 菜品
+            $('#ordered_list').children().each(function (i, n) {
+                // 测试用 +++++++++++++++++
+                // console.log($(n).find('.dish_name').attr('id'))
+                // console.log($(n).find('input:text').val())
+                // 测试用 -----------------
+                orderid = $(n).find('.dish_name').attr('id')
+                dish_quantity = $(n).find('input:text').val()
+                if($(n).find('input:text').val() == 0){
+                    deleteOrder(orderid)
+                }
+                else {
+                    patchOrder(orderid, dish_quantity)
+                }
+            })
+
+            // 获取选择的 备注内容
+            var note_total = ""
+            $('.note').children().each(function (i, n) {
+                if($(n).hasClass('checked')){
+                    {#$(n).attr('id')#}
+                    {#alert($(n).text())#}
+                    {#note_total += parseInt($(n).attr('id'))#}
+                    //if(note_total = ""){
+                    //    note_total += $(n).text()
+                    //}else{
+                    //    note_total += ", " + $(n).text()
+                    //}
+                    note_total += $(n).text() + ", "
+
+                    {#note_total += "abc"#}
+                }
+                console.log(note_total)
+            })
+
+            // 修改菜品 备注内容
+            //console.log('note_total:' + note_total)
+            if(note_total != ""){
+                //console.log('选中的要加note的order：' + $('.order_container input:checked').length)
+                $('#ordered_list').children().each(function (i, n) {
+                    //console.log($(n)[0].children[0].checked)  // JS 方法，因为用了[0]获取到的html节点元素
+                    //console.log($(n).first().children('input').is(':checked'))  //JQUERY方法，因为用了.first()获取到的时Jquery节点
+                    if($(n).first().children('input').is(':checked')){
+                        //console.log($(n).last().find('.dish_name').attr('id'))
+                        order_id = $(n).last().find('.dish_name').attr('id')
+                        $.ajax({
+                            url: '/testpatch/' + order_id + '/',
+                            type: 'PATCH',
+                            data:{"o_note": note_total},
+                            success: function (data) {
+                                getTicketDetail()
+                            }
+                        })
+                    }
+                    {#var order_id =  $('.order_container input:checked').siblings('div')[0].children[0]['id']#}
+                    {#console.log(order_id)#}
+
+                })
+
+            }
+
+        })
+    })
+</script>
+
+<!-- 获取note相加总数 -->
+<script>
+    function getNoteTotal() {
+
+        var note_total = 0
+        $('.note').children().each(function (i, n) {
+            if($(n).hasClass('checked')){
+                note_total += parseInt($(n).attr('id'))
+            }
+        //console.log(note_total)
+        })
+    }
+
+</script>
+
+{# 点击类别按钮 #}
+<script>
+    function changeCategoryStyle() {
+        tNum = getTableNum()
+        $('.category > .p-label').on('click', function () {
+            console.log($(this).children('input')[0]['id'] );
+            categoryID = $(this).children('input')[0]['id']
+            $(this).css('background-color', '#fff');
+            $(this).siblings().css('background-color', '#eee')
+
+            var tdata = ''
+
+            // 获取单张Ticket信息
+            function f1() {
+                $.ajax({
+                    url: '/testticketordergroupby/' + tNum + '/',
+                    type: 'GET',
+                    dataType: 'json',
+                    async: 'true',
+                    success: function (ticketdata) {
+                        tdata = ticketdata
+                        console.log(tdata)
+                        console.log('步骤1')
+                        //for (let td in tdata){
+                        //    console.log(td)
+                        //}
+                        f2()
+                    }
+                })
+            }
+
+
+            function f2(){$.ajax({
+                url: '/testdish/' + categoryID + '/',
+                type: 'GET',
+                dataType: 'json',
+                async: 'true',
+                success: function (data) {
+                    var htmls = '';
+                    for (let d in data) {
+                        /* console.log(data[d].dname + '  ' + data[d].dprice) */
+                        console.log('步骤2')
+                        /* for (let td in tdata) {
+                            if (data[d].dname == tdata[td].dname) {
+                                console.log(data[d].dname, '已选', tdata[td].total_quantity[0])
+                            } else {
+                                console.log('已选0')
+                            }
+                        } */
+                        htmls += '<div class="dish">'
+                            htmls += '<input type="checkbox" class="check">'
+                            htmls += '<div class="dish_detail">'
+                                htmls += '<div class="first_line">'
+                                    console.log('步骤3')
+                                    htmls += '<div class="dish_name" id=' + data[d].dcode + '><p>' + data[d].dname + '</p></div>'
+                                    for (let td in tdata) {
+                                        console.log('data[d].dname:' + data[d].dname + 'tdata[td].dname' + tdata[td].dname)
+                                        console.log('步骤4')
+                                        if (data[d].dname == tdata[td].dname) {
+                                            htmls += '<span>已选</span>'
+                                            htmls += '<div class="ordered_Q">' + tdata[td].total_quantity[0] + '</div>'
+                                        }
+                                    }
+                                htmls += '</div>'
+                                htmls += '<div class="second_line">'
+                                    htmls += '<div class="dish_price">' + data[d].dprice + '</div>'
+                                    htmls += '<div class="quantity">'
+                                        htmls += '<input type="button" class="minus is_hidden" value="-">'
+                                        htmls += '<input type="text" class="is_hidden dish_quantity" value=0>'
+                                        htmls += '<input type="button" class="add" value="+">'
+                                    htmls += '</div>'
+                                htmls += '</div>'
+                            htmls += '</div>'
+                        htmls += '</div>'
+                    }
+                    $('.dish_container').html('' + htmls)
+                    console.log('步骤5')
+                    {#$(this).siblings(':text')[0].setAttribute('class', '')#}
+                    changeNumHidden()
+                }
+            })}
+
+            {#$.when(f1).done(f2)#}
+            {#var p1 = new Promise(f1)#}
+            f1()
+            {#setTimeout(f2,200)#}
+        })
+    }
+</script>
+
+<!-- 控制 点菜页面 数字显示 -->
+<script>
+    function changeNumHidden() {
+        /* 点击加号 */
+        $('.add').on('click', function () {
+            {#console.log($(this).siblings(':text')[0].value)#}
+            {#console.log(typeof($(this).siblings(':text')[0].value))#}
+            /* console.log($(this).siblings(':text')[0].className) */
+            $(this).siblings(':text')[0].value = parseInt($(this).siblings(':text')[0].value) + 1
+            if(parseInt($(this).siblings(':text')[0].value)>0){
+                $(this).siblings(':text')[0].setAttribute('class', 'no_hidden dish_quantity')
+                $(this).siblings(':button')[0].setAttribute('class', 'minus')
+            }
+        })
+
+        $(document).on('click','.div',function (){})
+
+        /* 点击减号 */
+        $('.minus').on('click', function () {
+            {#console.log($(this).siblings(':text')[0].className)#}
+            if(parseInt($(this).siblings(':text')[0].value)>=1){
+                $(this).siblings(':text')[0].value = parseInt($(this).siblings(':text')[0].value) - 1
+            }
+            if(parseInt($(this).siblings(':text')[0].value)<1){
+                $(this).siblings(':text')[0].setAttribute('class', 'is_hidden dish_quantity')
+                $(this)[0].setAttribute('class', 'minus is_hidden')
+            }
+        })
+    }
+</script>
+
+<!-- 控制 详情页面 数字显示 -->
+<script>
+    function changeNumHidden2() {
+        /* 点击加号 */
+        $('.add2').on('click', function () {
+            // 测试用 ++++++++++++++
+            {#console.log($(this).siblings(':text')[0].value)#}
+            {#console.log(typeof($(this).siblings(':text')[0].value))#}
+            /* console.log($(this).siblings(':text')[0].className) */
+            // 测试用 --------------
+            // 点击 +号 后，数字加1
+            $(this).siblings(':text')[0].value = parseInt($(this).siblings(':text')[0].value) + 1
+            // 如果 数字 从0变成1，则给 -号 赋一个‘class’值，让其从隐藏变为显示
+            if(parseInt($(this).siblings(':text')[0].value)>0){
+                // $(this).siblings(':text')[0].setAttribute('class', 'no_hidden dish_quantity')
+                $(this).siblings(':button')[0].setAttribute('class', 'minus2')
+            }
+        })
+
+        $(document).on('click','.div',function (){})
+
+        /* 点击减号 */
+        $('.minus2').on('click', function () {
+            {#console.log($(this).siblings(':text')[0].className)#}
+            // 点击 -号 后，数字减1 （数字变成0以后，不会再生效）
+            if(parseInt($(this).siblings(':text')[0].value)>=1){
+                $(this).siblings(':text')[0].value = parseInt($(this).siblings(':text')[0].value) - 1
+            }
+            if(parseInt($(this).siblings(':text')[0].value)<1){
+                // $(this).siblings(':text')[0].setAttribute('class', 'is_hidden dish_quantity')
+                $(this)[0].setAttribute('class', 'minus2 is_hidden')
+            }
+        })
+    }
+</script>
+
+<!-- 获取base_note -->
+<script>
+    function get_base_note() {
+        $.ajax({
+            url:'/testbasenote/',
+            type: 'GET',
+            dataType: 'json',
+            async: 'true',
+            success: function (data) {
+                //console.log(data)
+                var htmls = '';
+                for(let d in data){
+                    htmls += '<p class=note'+ data[d].note_category_id + ' id=' + data[d].id + '>' + data[d].note_content + '</p>'
+                }
+                $('.outer2 .note').html('' + htmls);
+                $('.outer2 .note').children().on('click', function () {
+                    $(this).toggleClass('checked')
+                })
+            }
+        })
+    }
+</script>
+
+<!-- 获取单号 & 整单菜品详情 -->
+<script>
+    function getTicketDetail() {
+
+        // 如果有'to_front'， 则代表 详情页 弹出 到最前面
+        if ($("#ticket_list").hasClass('to_front')) {
+            {#console.log($('#table_num input:first').val())#}
+            // 获取桌号
+            var table_number = $('#table_num p:nth-child(2)').html()
+            {#alert(table_number)#}  // 打印“桌号” 测试用
+            // 向后台发送ajax请求，获取ticket详情
+            $.ajax({
+                url: '/testticket/' + table_number + '/',
+                type: 'GET',
+                dataType: 'json',
+                async: 'true',
+                success: function (data) {
+                    //console.log(data)
+                    var htmls = '';
+                    for(let d in data){
+                        htmls += '<div class="order_container">'
+                            htmls += '<input type="checkbox" class="check">'
+                            htmls += '<div class="order">'
+                                 htmls += '<div class="dish_name" id=' + data[d].order_id + '>'+ data[d].dname +'</div>'
+                                 htmls += '<input type="button" class="minus2" value="-">'
+                                 htmls += '<input type="text" class="dish_quantity" value='+ data[d].quantity + '>'
+                                 htmls += '<input type="button" class="add2" value="+">'
+                                 htmls += '<div class="dish_note">'+ data[d].note +'</div>'
+                             htmls += '</div>'
+                        htmls += '</div>'
+                    }
+                    $('#ordered_list').html('' + htmls)
+                    changeNumHidden2()
+                    var restyled = "/static/style.css";
+                    // freshStyle(restyled);
+                }
+            })
+            get_base_note()
+        }
+    }
+</script>
+
+<!-- 加载页面时执行 -->
+<script>
+    $(document).ready(function () {
+        {#antiZoom()#}
+        var tNum = ''
+
+        tNum = getTableNum()
+        $.ajax({
+            url: '/testcategory/',
+            type: 'GET',
+            dataType: 'json',
+            async: 'false',
+            success: function (data) {
+                var htmls = '';
+                for (let d in data) {
+                    {#console.log(data[d]['category'])#}
+                    {#console.log(data[d]);#}
+                    htmls += '<label class="p-label">'
+                    htmls += '<input type="radio" id=' + data[d]['category_id'] + ' name=' + 'category' + ' value=' + data[d]['category'] + (d == 0 ? " checked" : "") + '>'
+                    htmls += '<label class="c-label" for=' + data[d]['category_id'] + '>' + data[d]['category'] + '</label>'
+                    htmls += '</label>'
+                }
+
+                $(".category:first").html("" + htmls)
+                changeCategoryStyle()
+                var tdata = ''
+                $.ajax({
+                    url: '/testticketordergroupby/' + tNum + '/',
+                    type: 'GET',
+                    dataType: 'json',
+                    async: 'false',
+                    success: function (ticketdata) {
+                        tdata = ticketdata
+                        // console.log(tdata[0])
+                        //console.log(tdata[0]['tableid'][0])
+                        if(tdata[0] !== undefined){
+                            // console.log("tableid不为空") // 测试用
+                            $("#table_num p:nth-child(2)").attr('id',tdata[0]['tableid'][0])
+                        }else{
+                            try {
+                                $.ajax({
+                                url: '/testemptyticket/' + tNum + '/',
+                                type: 'GET',
+                                dataType: 'json',
+                                async: 'false',
+                                success: function (ticketdata) {
+                                    tdata = ticketdata
+                                    if(tdata[0] !== undefined){
+                                        // console.log("tableid不为空") // 测试用
+                                        $("#table_num p:nth-child(2)").attr('id',tdata[0]['ticket_id'])
+                                    }else{
+                                        console.log("tableID为空")
+                                    }
+                                }
+                            })
+                            } catch (e) {
+                                console.log(e)
+                            }
+                        }
+                    }
+                })
+                $.ajax({
+                    url: '/testdish/1/',
+                    type: 'GET',
+                    dataType: 'json',
+                    async: 'false',
+                    success: function (data) {
+                        {#console.log(data)#}
+
+                        var htmls = ''
+                        for (let d in data) {
+                            {#console.log(tdata[0])#}
+                            {#for (let td in tdata){#}
+                            {#    if (data[d].dname == tdata[td].dname) {#}
+                            {#        console.log(data[d].dname, '已选', tdata[td].total_quantity[0])#}
+                            {#    }#}
+                            {#    else{#}
+                            {#        console.log('已选0')#}
+                            {#    }#}
+                            {#}#}
+                            {#console.log(data[d].dname + '  ' + data[d].dprice)#}
+                            htmls += '<div class="dish">'
+                                htmls += '<input type="checkbox" class="check">'
+                                htmls += '<div class="dish_detail">'
+                                    htmls += '<div class="first_line">'
+                                        htmls += '<div class="dish_name" id=' + data[d].dcode + '><p>' + data[d].dname + '</p></div>'
+
+                                        for (let td in tdata) {
+                                            if (data[d].dname == tdata[td].dname) {
+                                                htmls += '<span>已选</span>'
+                                                htmls += '<div class="ordered_Q">' + tdata[td].total_quantity[0] + '</div>'
+                                            }
+                                        }
+                                    htmls += '</div>'
+                                    htmls += '<div class="second_line">'
+                                        htmls += '<div class="dish_price">' + data[d].dprice + '</div>'
+                                        htmls += '<div class="quantity">'
+                                            htmls += '<input type="button" class="minus is_hidden" value="-">'
+                                            htmls += '<input type="text" class="is_hidden dish_quantity" value=' + 0 + '>'
+                                            htmls += '<input type="button" class="add" value="+">'
+                                        htmls += '</div>'
+                                        htmls += '</div>'
+                                    htmls += '</div>'
+                            htmls += '</div>'
+                        }
+                        {#console.log(htmls)#}
+                        $('.dish_container').html('' + htmls)
+                        changeNumHidden()
+                    }
+                })
+            }
+        })
+    });
+</script>
+
+<!-- 刷新“添加”商品后的页面信息 -->
+<script>
+    function getOrderPage() {
+        var tNum = ''
+
+        tNum = getTableNum()
+
+                var tdata = ''
+                $.ajax({
+                    url: '/testticketordergroupby/' + tNum + '/',
+                    type: 'GET',
+                    dataType: 'json',
+                    async: 'false',
+                    success: function (ticketdata) {
+                        tdata = ticketdata
+                        console.log(typeof(tdata[0]))
+                        //console.log(tdata[0]['tableid'][0])
+                        if(tdata[0] !== undefined){
+                            console.log("tableid不为空")
+                            $("#table_num p:nth-child(2)").attr('id',tdata[0]['tableid'][0])
+                        }
+                        else{console.log("tableID为空")}
+                        f22()
+                        //for (let td in tdata){
+                        //    console.log(td)
+                        //}
+                    }
+                })
+
+                function f22(){
+                var categoryID = ""
+                $('.p-label').each(function () {
+                    //alert($(this).children('input')[0]['id'])
+                    //console.log($(this).css("backgroundColor"))
+                    if ($(this).css("backgroundColor") === "rgb(255, 255, 255)") {
+                        //alert($(this).children('input')[0]['id']);
+                        categoryID = $(this).children('input')[0]['id']
+                    }
+                })
+
+
+                $.ajax({
+                    url: '/testdish/' + categoryID + '/',
+                    type: 'GET',
+                    dataType: 'json',
+                    async: 'false',
+                    success: function (data) {
+                        console.log(data)
+
+                        var htmls = ''
+                        for (let d in data) {
+                            {#console.log(tdata[0])#}
+                            {#for (let td in tdata){#}
+                            {#    if (data[d].dname == tdata[td].dname) {#}
+                            {#        console.log(data[d].dname, '已选', tdata[td].total_quantity[0])#}
+                            {#    }#}
+                            {#    else{#}
+                            {#        console.log('已选0')#}
+                            {#    }#}
+                            {#}#}
+                            {#console.log(data[d].dname + '  ' + data[d].dprice)#}
+                            htmls += '<div class="dish">'
+                                htmls += '<input type="checkbox" class="check">'
+                                htmls += '<div class="dish_detail">'
+                                    htmls += '<div class="first_line">'
+                                        htmls += '<div class="dish_name" id=' + data[d].dcode + '><p>' + data[d].dname + '</p></div>'
+
+                                        for (let td in tdata) {
+                                            if (data[d].dname == tdata[td].dname) {
+                                                htmls += '<span>已选</span>'
+                                                htmls += '<div class="ordered_Q">' + tdata[td].total_quantity[0] + '</div>'
+                                            }
+                                        }
+                                    htmls += '</div>'
+                                    htmls += '<div class="second_line">'
+                                        htmls += '<div class="dish_price">' + data[d].dprice + '</div>'
+                                        htmls += '<div class="quantity">'
+                                            htmls += '<input type="button" class="minus is_hidden" value="-">'
+                                            htmls += '<input type="text" class="is_hidden dish_quantity" value=' + 0 + '>'
+                                            htmls += '<input type="button" class="add" value="+">'
+                                        htmls += '</div>'
+                                        htmls += '</div>'
+                                    htmls += '</div>'
+                            htmls += '</div>'
+                        }
+                        {#console.log(htmls)#}
+                        $('.dish_container').html('' + htmls)
+                        changeNumHidden()
+                    }
+                })}
+            }
+
+
+</script>
+
+<!-- 悬浮球样式 -->
+<script>
+    /* 悬浮球样式 */
+    {#$(document).ready(function () {#}
+    {#    $("#switch").on("click", function () {#}
+    {#        $("#note_ball").toggleClass('long');#}
+    {#        if ($("#note_ball").height() > 50) {#}
+    {#            $("#switch").html('+');#}
+    {#        } else {#}
+    {#            $("#switch").html('-');#}
+    {#        }#}
+    {#    });#}
+    {#);#}
+
+    /* 悬浮球样式2*/
+    $(document).ready(function () {
+        $("#note_ball").on("click", function () {
+            $("#note_ball").toggleClass('ball_up');
+            if ($("#note_ball").width() > 50) {
+                {#$("#switch").html('∧');#}
+                $("#note_ball").html('<img src="/static/up_arrow.png" />');
+            } else {
+                {#$("#note_ball").html('×');#}
+                $("#note_ball").html('<img src="/static/down_arrow.png" width="50%" />');
+            }
+            $("#ticket_list").toggleClass('to_front');
+
+            // 获取桌号明细
+            getTicketDetail()
+        });
+    });
+
+    /* 菜品类别样式 */
+    {#$(document).ready(function(){#}
+    {#    $('.category > .p-label').on('click', function () {#}
+    {#alert($(this).parent().html());#}
+    {#        $(this).css('background-color', '#fff');#}
+    {#        $(this).siblings().css('background-color', '#eee')#}
+    {#    })#}
+
+</script>
+
+<body>
+
+    <div class="note_ball" id="note_ball">
+{#        <p id="switch">∧</p>#}
+        <img src="/static/up_arrow.png" />
+    </div>
+
+    <div class="outer">
+
+        <div class="info" id="info">
+            <div class="nav_ele" id="home_page">
+{#               <button value="大厅" onclick="javascript:window.location.href='/salle/'">大厅</button>#}
+               <img src="/static/home.png" onclick="javascript:window.location.href='/salle/'" >
+            </div>
+            <div class="nav_ele" id="table_num">
+                <p>桌号：
+                <p id="input_table_num" value=""></p>
+            </div>
+            <div class="nav_ele" id="client_quantity">
+                <p>人数：</p>
+                <input type="text" id="input_client_quantity" value="4">
+            </div>
+            <div class="nav_ele" id="client_num">
+                <p>客户：</p>
+                <div>
+                    <button id="client_num_down">-</button>
+                    <p>1</p>
+                    <button id="client_num_up">+</button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="main">
+
+            <div class="category">
+                <label class="p-label">
+                    <input type="radio" id="qc" name="qc" value="凉菜"
+                           checked>
+                    <label class="c-label" for="huey">{{ qc }}</label>
+                </label>
+                <label class="p-label">
+                    <input type="radio" id="qc" name="qc" value="凉菜"
+                    >
+                    <label class="c-label" for="huey">{{ qc }}</label>
+                </label>
+            </div>
+
+            <div class="dish_container">
+                <div class="dish">
+                    <input type="checkbox" class="check">
+                    <div class="dish_detail">
+                        <div class="first_line">
+                            <div class="dish_name"><p>菜名</p></div>
+                            <span>已选</span>
+                            <div class="ordered_Q"></div>
+                        </div>
+                        <div class="second_line">
+                            <div class="dish_price">价格</div>
+                            <div class="quantity">
+                                <input type="button" class="minus is_hidden" value="-">
+                                <input type="text" id="dish_quantity" value=1>
+                                <input type="button" class="add" value="+">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dish">
+                    <input type="checkbox" class="check">
+                    <div class="dish_detail">
+                        <div class="first_line">
+                            <div class="dish_name"><p>菜名</p></div>
+                            <span>已选</span>
+                            <div class="ordered_Q">数量</div>
+                        </div>
+                        <div class="second_line">
+                            <div class="dish_price">价格</div>
+                            <div class="quantity">
+                                <input type="button" class="minus is_hidden" value="-">
+                                <input type="text" id="dish_quantity" value=1>
+                                <input type="button" class="add" value="+">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="nav">
+            <div class="nva_bottom" id="confirm">
+                <p>添加</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="outer2" id="ticket_list">
+
+        <div id="ordered_list">
+            <div class="order_container">
+                <input type="checkbox" class="check">
+                <div class="order">
+                    <div class="dish_name">{{ dname }}</div>
+                    <input type="button" class="minus2" value="-">
+                    <input type="text" class="dish_quantity" value={{ quantity }}>
+                    <input type="button" class="add2" value="+">
+                    <div class="dish_note">{{ note }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="note">
+
+        </div>
+
+        <div id="order_submit">
+            <p>提交</p>
+            <p>撤销</p>
+        </div>
+
+        <div class="stay_empty">
+            <p>【已到达底部】</p>
+            <p>=============</p>
+        </div>
+
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>左右布局测试</title>
+    <script src="/static/jquery-3.5.1.min.js"></script>
+    <style>
+        body{
+            {#margin: 0;#}
+            {#padding: 0;#}
+            background-color:darkcyan;
+        }
+        .headerTitle{
+            padding-left: 3em;
+            color: #eee;
+        }
+
+        .wrapper-grid2{
+            margin-left: 2em;
+            display: grid;
+            grid-template-columns: 5fr 1fr;
+            grid-auto-rows: minmax(600px, auto);
+            grid-gap: 1em;
+        }
+
+        .wrapper-grid{
+            padding: 1em;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-auto-rows: minmax(200px, auto);
+            grid-gap: 1em;
+            align-items: start;
+            border: 1px solid #eee ;
+        }
+
+        .wrapper-grid-2{
+            /* display: grid;
+            grid-template-columns: 1fr;
+            grid-auto-rows: minmax(30px, auto);*/
+        }
+
+        .wrapper-grid-2x{
+            padding: 1em;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-auto-rows: minmax(30px, auto);
+            grid-gap: 1em;
+            align-items: start;
+            border: 1px solid #eee ;
+            background-color: #eee;
+        }
+
+        .wrapper-grid-2x-2{
+
+        }
+
+
+        .wrapper-grid-2x p{
+            padding-left: 1em;
+        }
+
+        .ticket{
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-auto-rows: auto;
+            align-items: start;
+            border: 1px solid #eee ;
+        }
+
+        .header{
+            background-color: #ddd; ;
+        }
+        .header p{
+            padding-left: 1em;
+        }
+
+        .order{
+            color: #eee;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-auto-rows: 45px;
+            border: 1px solid #eee ;
+        }
+
+        .order p{
+            padding-left: 1em;
+        }
+
+    </style>
+
+    <script>
+    //获取所有Ticket内容
+    function getOrderList(){
+        $.ajax({
+            url: "/testxhr/",
+            type: "GET",
+            dataType: "json",
+            async:"true",
+            success: function (data) {
+                {#console.log(data.table_quantity)#}
+                var htmls = ''
+                {#$('#wrapper').html("")#}
+                for(let tn in data.table_list){
+                    /* console.log(data.table_list[tn])*/
+                    htmls += '<div class="ticket" id=' + data.table_list[tn] + '>';
+                        htmls += '<div class="header">' //每个Ticket的标题栏
+                            htmls += '<p>桌号: ' + data.table_list[tn] + '</p>'  //标题中的“单号”
+                        htmls += '</div>'
+                        htmls += '<div class="order">' //每张Ticket的“内容栏”：菜名、数量、（后续加入备注）
+
+                            for(let order in data.data){
+                                console.log(data.data[order]);
+                                if(data.data[order].table_num == data.table_list[tn]){
+
+                                    htmls += '<p>' + data.data[order].quantity + '  ' + data.data[order].dname + '</p>';
+                                }
+
+                            }
+                        htmls += '</div>'
+                    htmls += '</div>'
+
+                    $('#wrapper').html('' + htmls)
+                }
+
+
+            }
+        })
+    };
+
+
+    function getOrderGroupbyList(){
+        $.ajax({
+            url: "/testxhr2/",
+            type: "GET",
+            dataType: "json",
+            async:"true",
+            success: function (data) {
+                console.log(data)
+                var htmls = ''
+                for(let dish in data){
+                    console.log(data[dish])
+                    htmls += '<div class="wrapper-grid-2x-2" id=' + data[dish]['did'] + '>';
+
+                        htmls += '<p>' + data[dish].total_quantity[0] + '  ' + data[dish].dname + '</p>'
+
+                    htmls += '</div>'
+                    $('#wrapper-groupby').html('' + htmls)
+                }
+
+
+            }
+        })
+    };
+
+    $(document).ready(getOrderList());
+
+    $(document).ready(getOrderGroupbyList());
+
+    $(function () {
+        $(".grid-left p").click(function () {
+            var obj = $(this)
+            {#alert($(this).attr('id'))#}
+            $.ajax({
+            url: "/dishlistdrf/" + obj.attr('id'),
+            type: "GET",
+            dataType: "json",
+            {#data: obj.attr('id'),#}
+            async:"true",
+            success: function (data) {
+                console.log(data)
+                var htmls = '';
+                for(let d in data){
+                    htmls += '<p>';
+                        htmls += data[d].dname + '<br>' + data[d].dprice;
+                    htmls += '</p>'
+                }
+                console.log(htmls);
+                console.log($("#mid").html())
+                $("#mid").html(""+ htmls)
+
+                console.log($("#mid").html())
+                {#clickToRed();#}
+            }
+        })
+        })
+    })
+    </script>
+</head>
+<body>
+    <h3 class="headerTitle">测试页面</h3>
+{#    <input type="button" value="按钮1" style="margin-left: 3em">#}
+    <div class="wrapper-grid2">
+        <div class="wrapper-grid" id="wrapper" >
+        <div class="ticket">
+            <div class="header"><p>单号</p></div>
+            <div class="order"><p>菜名</p></div>
+        </div>
+        <div class="ticket">
+            <div class="header"><p>单号</p></div>
+            <div class="order">
+                <p>菜名</p>
+                <p>菜名</p>
+                <p>菜名</p>
+                <p>菜名</p>
+                <p>菜名</p>
+                <p>菜名</p>
+            </div>
+        </div>
+               <div class="ticket">
+            <div class="header"><p>单号</p></div>
+            <div class="order"><p>菜名</p></div>
+        </div><div class="ticket">
+            <div class="header"><p>单号</p></div>
+            <div class="order"><p>菜名</p></div>
+        </div><div class="ticket">
+            <div class="header"><p>单号</p></div>
+            <div class="order"><p>菜名</p></div>
+        </div><div class="ticket">
+            <div class="header"><p>单号</p></div>
+            <div class="order"><p>菜名</p></div>
+        </div><div class="ticket">
+            <div class="header"><p>单号</p></div>
+            <div class="order"><p>菜名</p></div>
+        </div><div class="ticket">
+            <div class="header"><p>单号</p></div>
+            <div class="order"><p>菜名</p></div>
+        </div><div class="ticket">
+            <div class="header"><p>单号</p></div>
+            <div class="order"><p>菜名</p></div>
+        </div><div class="ticket">
+            <div class="header"><p>单号</p></div>
+            <div class="order"><p>菜名</p></div>
+        </div>
+    </div>
+        <div class="wrapper-grid-2">
+            <div class="wrapper-grid-2x">
+                <div class="wrapper-grid-2x-1"><p>汇总</p></div>
+                <div class="wrapper-grid-2x-2" id="wrapper-groupby">
+                    <p>1  xxxx</p>
+                    <p>1  xxxx</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,520 @@
+input[type=button], button, select, textarea {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    border: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+*{
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+input[type=button] .add:active{
+    opacity: .7;
+}
+
+.is_hidden{
+    display: none;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f7f7f7;
+    user-select:none;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -khtml-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none
+}
+
+input[type='radio'] {
+    display: none;
+}
+
+.note_ball {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    bottom: 75px;
+    left: 5px;
+    z-index: 11;
+    height: 50px;
+    width: 50px;
+    border-radius: 25px;
+    background-color: rgba(54, 71, 79, 0.3);
+    text-align: center;
+    font-size: 2em;
+    transition: 0.3s;
+}
+
+.note_ball img{
+    width: 50%;
+}
+
+.long {
+    height: 580px;
+    width: 100px;
+    border-radius: 10px;
+}
+
+.ball_up{
+    bottom: calc(75px + (100% - 60px - 70px) - 40px );
+
+    height: 33px;
+    width: 60px;
+    border-radius: 5px;
+
+}
+
+.info {
+    position: fixed;
+    top: 0px;
+    display: flex;
+    color: #fff;
+    /*background-color: #004D40; //墨绿*/
+    /*background-color: rgb(26,186,154); //浅绿*/
+    /*background-color: rgb(228,75,59); //浅红*/
+    /*background-color: rgb(34,67,101); //墨蓝*/
+    /*background-image: linear-gradient(to right bottom , #7A88FF, #7AFFAF);*/
+    /*background-image: linear-gradient(to right bottom , rgb(85,165,170), rgb(206,171,103));*/
+    background-image: linear-gradient(to right bottom , rgb(158,173,118), rgb(98,182,130));
+    width: 100%;
+    height: 60px;
+    z-index: 9;
+    box-shadow: 1px 5px 5px #aaa;
+}
+
+.info #home_page {
+    width: 18%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.info #home_page input {
+    height: 100%;
+    width: 50%;
+    font-size: 20px;
+}
+
+.info #home_page img{
+    width: 50%;
+}
+
+.info #table_num {
+    width: 17%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.info #table_num input {
+    height: 50%;
+    width: 45%;
+    font-size: 20px;
+}
+
+.info #client_quantity {
+    width: 30%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.info #client_quantity input {
+    height: 50%;
+    width: 30%;
+    font-size: 20px;
+}
+
+.info #client_num {
+    width: 35%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.info #client_num div {
+    width: 65%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info #client_num button {
+    width: 30px;
+    height: 30px;
+}
+
+/* ***************以上为 顶部info************* */
+
+.main {
+    margin-top: 15px;
+    position: relative;
+    top: 50px;
+    background-color: #fff;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+}
+
+.main .category {
+
+    padding-left: 5px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: minmax(40px, auto);
+    font-size: 15px;
+    height: 40px;
+}
+
+.category .p-label {
+    width: 100%;
+    background-color: #eee;
+    border-top: 1px solid #ddd;
+
+}
+
+
+.category label:first-child {
+    background-color: #fff;
+}
+
+input[type='radio'] + label::before {
+    content: '';
+    display: inline-block;
+    box-sizing: border-box;
+    width: 6px;
+    height: 100%;
+    border: 1px solid #eee;
+    vertical-align: middle;
+    background-color: #eee;
+}
+
+input[type='radio']:checked + label::before {
+    content: '';
+    display: inline-block;
+    box-sizing: border-box;
+    width: 6px;
+    height: 100%;
+    border: 3px solid #ff4848;
+    background-color: #fff;
+    vertical-align: middle;
+}
+
+input[type='radio']:checked + label {
+    background-color: #fff;
+}
+
+.main .category p {
+    word-break: break-all;
+}
+
+.dish_container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 70px;
+}
+
+.dish_container .dish{
+    padding: 0px 10px;
+    margin-top: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    flex-direction: row;
+    align-content: start;
+    align-items: center;
+    justify-content: space-evenly;
+    line-height: 0px;
+}
+
+.dish_container .dish_detail{
+    display: flex;
+    flex-direction: column;
+    width: 85%;
+
+}
+
+.dish .check{
+    width: 15%;
+}
+
+
+.dish_container .first_line{
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: center;
+    height: 20px;
+}
+
+.dish_container .dish_name{
+    width: 55%;
+    font-weight: bolder;
+}
+
+.dish_container .dish_price{
+    color: #ff4848;
+}
+
+.dish_container span{
+    margin-left: 30px;
+}
+
+.dish_container .ordered_Q{
+    margin-left: 10px;
+}
+
+.dish_container .second_line{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+}
+
+.dish_container .quantity{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.dish_container .quantity .add{
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    border: 1px solid #3ada3a;
+    background-color: #3ada3a;
+    color: #fff;
+    /*display: flex;*/
+}
+
+.dish_container .add{
+    /*font-size: 1.5rem;*/
+}
+
+.dish_container .quantity .minus{
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    border: 1px solid #3ada3a;
+    background-color: #fff;
+    color: #3ada3a;
+}
+
+.dish_container .dish_quantity{
+    width: 35px;
+    height: 25px;
+    margin: 0px 5px;
+    text-align: center;
+    color: #ff4848;
+}
+
+/*.dish_container .dish_quantity input{*/
+    /*width: 35px;*/
+    /*height: 25px;*/
+    /*margin: 0px 5px;*/
+    /*text-align: center;*/
+/*}*/
+
+.nav {
+    position: fixed;
+    bottom: 0px;
+    /*background-color: #B2DFDB;*/
+    background-color: rgba(54, 71, 79, 0.3);
+    width: 100%;
+    height: 70px;
+    z-index: 9;
+    box-shadow: 0px -1px #eee;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+
+}
+
+.nav #confirm{
+    width: 20%;
+    height: 100%;
+    background-color: orangered;
+    color: white;
+    font-weight: bolder;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+
+/* ***************以上为 order页面************* */
+
+/* ***************以下为 ticket_list************* */
+/* 以下为ticket_list */
+.outer2{
+    margin-bottom: 100px;
+    padding-left: 10px;
+    padding-top: 40px;
+    position: fixed;
+    top: calc(100%);
+    z-index:8;
+    height: calc(100% - 70px);
+    width: 100%;
+    background-color: #fff;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    overflow-y:auto;
+}
+
+.to_front{
+    top: 60px;
+    z-index: 10;
+}
+
+#ordered_list{
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 20px;
+    flex-shrink: 0;
+    max-height: calc(100vh - 350px);
+    overflow-y: auto;
+}
+
+#ordered_list .order{
+    width: 80%;
+    padding: 5px 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+}
+
+#ordered_list .order_container{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+}
+
+#ordered_list .order_container input{
+    border: 1px solid #ddd;
+    width: 25px;
+    height: 25px;
+}
+
+#ordered_list .order .dish_name{
+    flex-basis: 40%;
+}
+
+#ordered_list .order .add2{
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    border: 1px solid #3ada3a;
+    background-color: #3ada3a;
+    color: #fff;
+}
+
+#ordered_list .order .minus2{
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    border: 1px solid #3ada3a;
+    background-color: #fff;
+    color: #3ada3a;
+}
+
+#ordered_list .order .dish_quantity{
+    border: 1px solid #eee;
+    text-align: center;
+    width: 25px;
+    height: 25px;
+    font-size: 20px;
+}
+
+#ordered_list .order .dish_note{
+    flex-basis: 30%;
+    font-size: 15px;
+}
+
+
+.outer2 .note{
+    flex-shrink: 0;
+    margin-top: 20px;
+    width: 95%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.outer2 .note p{
+    flex-basis: max-content;
+    border: 1px solid #ddd;
+    margin-left: 5px;
+    margin-top: -10px;
+}
+
+.outer2 .note2{
+    color: red;
+}
+
+.outer2 .note3{
+    color: green;
+}
+
+.outer2 .note4{
+    color: blue;
+}
+
+.outer2 .note5{
+    color: darkorange;
+}
+
+.outer2 .note6{
+    color: purple;
+}
+
+#order_submit{
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+#order_submit p:first-child{
+    border: 1px solid green;
+    background-color: green;
+    color: #fff;
+    width: 50px;
+    border-radius: 10px;
+    line-height: 40px;
+    text-align: center;
+    flex-basis: 30%;
+}
+
+#order_submit p:last-child{
+    border: 1px solid red;
+    background-color: red;
+    color: #fff;
+    width: 50px;
+    border-radius: 10px;
+    line-height: 40px;
+    text-align: center;
+    flex-basis: 30%;
+}
+
+.note .checked{
+    background-color: #bbb;
+}
