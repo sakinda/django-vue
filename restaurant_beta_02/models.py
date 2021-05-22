@@ -199,4 +199,4 @@ class DataPrint(models.Model):
 
     print_id = models.CharField(verbose_name='打印编号', primary_key=True, max_length=32)
     print_type = models.IntegerField(verbose_name='打印类型') # 0:cuisine, 1:salle, 2:yellowT
-    print_content = models.CharField(verbose_name='打印内容', max_length=8192)
+    print_content = models.TextField(verbose_name='打印内容', max_length=65535)

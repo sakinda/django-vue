@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fbf4521b-33dd-443a-82c2-d3c5e49c278f" name="Default Changelist" comment="" />
+    <list default="true" id="fbf4521b-33dd-443a-82c2-d3c5e49c278f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/restaurantBeta02/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/restaurantBeta02/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/restaurant_beta_02/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/restaurant_beta_02/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/restaurant_beta_02/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/restaurant_beta_02/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/restaurant_beta_02/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/restaurant_beta_02/views.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,15 +40,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/test.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1957">
-              <caret line="103" column="47" selection-start-line="103" selection-start-column="47" selection-end-line="103" selection-end-column="47" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/testService.html">
           <provider selected="true" editor-type-id="text-editor">
@@ -82,11 +79,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/restaurant_beta_02/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="494">
-              <caret line="28" column="68" selection-start-line="28" selection-start-column="68" selection-end-line="28" selection-end-column="68" />
+            <state relative-caret-position="506">
+              <caret line="35" column="4" lean-forward="true" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="89" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -97,17 +94,40 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/restaurant_beta_02/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="25" selection-start-line="25" selection-end-line="25" />
+            <state relative-caret-position="438">
+              <caret line="583" selection-start-line="583" selection-end-line="586" selection-end-column="33" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/restaurant_beta_02/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="109">
-              <caret line="111" column="27" selection-start-line="111" selection-start-column="4" selection-end-line="111" selection-end-column="27" />
+            <state relative-caret-position="467">
+              <caret line="197" column="33" lean-forward="true" selection-start-line="197" selection-start-column="33" selection-end-line="197" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/restaurantBeta02/settings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="88" column="28" lean-forward="true" selection-start-line="88" selection-start-column="28" selection-end-line="88" selection-end-column="28" />
+              <folding>
+                <element signature="e#314#323#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/restaurantBeta02/wsgi.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#232#241#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -125,15 +145,8 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>testticketordergroupby</find>
-      <find>retr</find>
-      <find>testcre</find>
-      <find>get_res</find>
-      <find>RetrieveAPIView</find>
-      <find>AxiosTicketDetailSerializer</find>
       <find>context</find>
       <find>1618912204</find>
-      <find>DestroyAPIView</find>
       <find>RetriveAPIView</find>
       <find>testticket2</find>
       <find>ticket_status</find>
@@ -155,6 +168,13 @@
       <find>delivery</find>
       <find>delivery_man</find>
       <find>filter</find>
+      <find>testalldish</find>
+      <find>testticketordergroupby2</find>
+      <find>plat</find>
+      <find>员</find>
+      <find>print</find>
+      <find>testticketlist</find>
+      <find>DestroyAPIView</find>
     </findStrings>
     <replaceStrings>
       <replace>ordered_page</replace>
@@ -171,7 +191,6 @@
         <option value="$PROJECT_DIR$/restaurantBeta02/urls.py" />
         <option value="$PROJECT_DIR$/venv/Lib/site-packages/django/db/backends/mysql/base.py" />
         <option value="$PROJECT_DIR$/restaurant_beta_02/admin.py" />
-        <option value="$PROJECT_DIR$/restaurantBeta02/settings.py" />
         <option value="$PROJECT_DIR$/templates/style.css" />
         <option value="$USER_HOME$/AppData/Local/Programs/Python/Python38/Lib/site-packages/django/db/backends/mysql/base.py" />
         <option value="$PROJECT_DIR$/utiles/scriptInsertDB.py" />
@@ -183,17 +202,18 @@
         <option value="$PROJECT_DIR$/templates/salle.html" />
         <option value="$PROJECT_DIR$/static/style.css" />
         <option value="$PROJECT_DIR$/templates/testService.html" />
+        <option value="$PROJECT_DIR$/restaurantBeta02/settings.py" />
+        <option value="$PROJECT_DIR$/restaurant_beta_02/models.py" />
         <option value="$PROJECT_DIR$/restaurant_beta_02/urls.py" />
         <option value="$PROJECT_DIR$/restaurant_beta_02/views.py" />
-        <option value="$PROJECT_DIR$/restaurant_beta_02/models.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-14" />
     <option name="y" value="-14" />
-    <option name="width" value="2762" />
-    <option name="height" value="1780" />
+    <option name="width" value="2764" />
+    <option name="height" value="1782" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -201,8 +221,34 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane" />
       <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="restaurantBeta02" type="b2602c69:ProjectViewProjectNode" />
+              <item name="restaurantBeta02" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="restaurantBeta02" type="b2602c69:ProjectViewProjectNode" />
+              <item name="restaurantBeta02" type="462c0819:PsiDirectoryNode" />
+              <item name="restaurant_beta_02" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="restaurantBeta02" type="b2602c69:ProjectViewProjectNode" />
+              <item name="restaurantBeta02" type="462c0819:PsiDirectoryNode" />
+              <item name="restaurant_beta_02" type="462c0819:PsiDirectoryNode" />
+              <item name="migrations" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="restaurantBeta02" type="b2602c69:ProjectViewProjectNode" />
+              <item name="restaurantBeta02" type="462c0819:PsiDirectoryNode" />
+              <item name="restaurantBeta02" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -431,21 +477,22 @@
       <workItem from="1619785578229" duration="1628000" />
       <workItem from="1619790498853" duration="24220000" />
       <workItem from="1620636415613" duration="22651000" />
-      <workItem from="1621069013184" duration="5018000" />
+      <workItem from="1621069013184" duration="17593000" />
+      <workItem from="1621339811903" duration="14660000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="592839000" />
+    <option name="totallyTimeSpent" value="620074000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1577" height="1016" extended-state="6" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.11965812" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.14858645" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" order="0" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="1" visible="true" weight="0.1841808" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="1" visible="true" weight="0.14463277" />
       <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="3" />
       <window_info anchor="bottom" id="Python Console" order="4" weight="0.3295711" />
@@ -550,16 +597,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/restaurantBeta02/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="31" column="21" lean-forward="true" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
-          <folding>
-            <element signature="e#314#323#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/restaurant_beta_02/admin.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="247">
@@ -622,27 +659,60 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/urls.py">
+    <entry file="file://$PROJECT_DIR$/restaurantBeta02/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="28" column="68" selection-start-line="28" selection-start-column="68" selection-end-line="28" selection-end-column="68" />
+        <state relative-caret-position="240">
+          <caret line="88" column="28" lean-forward="true" selection-start-line="88" selection-start-column="28" selection-end-line="88" selection-end-column="28" />
           <folding>
-            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#314#323#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/views.py">
+    <entry file="file://$PROJECT_DIR$/restaurantBeta02/wsgi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="25" selection-start-line="25" selection-end-line="25" />
+        <state>
+          <folding>
+            <element signature="e#232#241#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/migrations/0016_auto_20210521_2114.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/migrations/0015_auto_20210521_2115.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="16" column="10" lean-forward="true" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/restaurant_beta_02/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="109">
-          <caret line="111" column="27" selection-start-line="111" selection-start-column="4" selection-end-line="111" selection-end-column="27" />
+        <state relative-caret-position="467">
+          <caret line="197" column="33" lean-forward="true" selection-start-line="197" selection-start-column="33" selection-end-line="197" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="438">
+          <caret line="583" selection-start-line="583" selection-end-line="586" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="35" column="4" lean-forward="true" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="89" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

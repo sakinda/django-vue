@@ -14,13 +14,25 @@ from rest_framework import serializers, status
 from rest_framework.generics import ListAPIView, GenericAPIView, UpdateAPIView, CreateAPIView, DestroyAPIView, \
     RetrieveAPIView
 
-tId = '1621012931'  # 关机后每15分钟更新一次
-phpId = 'incn7m2d7qgas9b6oj54rhtva4'  # 每周更新一次
+tId = '1621602865'  # 关机后每15分钟更新一次
+phpId = 'tpoi5bstj1vst1avdtego48ug7'  # 每周更新一次
 
 
 class DataTicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = DataTicket
+        fields = "__all__"
+
+
+class DataPlatformSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DataDeliveryPlatform
+        fields = "__all__"
+
+
+class DataDeliveryManSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DataDeliveryMan
         fields = "__all__"
 
 
@@ -189,7 +201,7 @@ class TestTicketOrderGroupby2Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = DataDish
-        fields = ['did', 'dname', 'dprice', 'dtax', 'dsubcategory', 'orders', 'total_quantity']
+        fields = ['did', 'dcode', 'dname', 'dprice', 'dtax', 'dsubcategory', 'orders', 'total_quantity']
 
     def get_total_quantity(self, obj):
         # print('::::::::::::::::::::::::::::::::', obj)
@@ -552,3 +564,24 @@ class TestDishGroupbyView(ListAPIView):
                     orders__tid__payment_status=2)).order_by(
                 'dsubcategory').distinct()
             return dishes
+
+
+class TestAllPlatformView(ListAPIView):
+    queryset = DataDeliveryPlatform.objects.all()
+    serializer_class = DataPlatformSerializer
+
+
+class TestAllLivreurView(ListAPIView):
+    queryset = DataDeliveryMan.objects.all()
+    serializer_class = DataDeliveryManSerializer
+
+
+class TestTicketListPaiedNoPaiedView(ListAPIView):
+    serializer_class = DataTicketSerializer
+    queryset = DataTicket.objects.all()
+
+
+def EmptyDataTicketView(self):
+    DataTicket.objects.all().delete()
+    DataOrder.objects.all().delete()
+    return HttpResponse('删除所有数据')
