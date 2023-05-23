@@ -102,18 +102,25 @@
                 var htmls = ''
                 {#$('#wrapper').html("")#}
                 for(let tn in data.table_list){
-                    /* console.log(data.table_list[tn])*/
+                    console.log(data.table_list[tn])
+                    if (data.table_list[tn].tid__payment_status != 0)
+                        continue
+                    if (data.table_list[tn].tid__type != 2)
+                        continue
+
                     htmls += '<div class="ticket" id=' + data.table_list[tn] + '>';
                         htmls += '<div class="header">' //每个Ticket的标题栏
-                            htmls += '<p>桌号: ' + data.table_list[tn] + '</p>'  //标题中的“单号”
+                            htmls += '<p>桌号: ' + data.table_list[tn].tid__table_num + '    ' + data.table_list[tn].tid__delivery_platform__platform
+ + '  ' + data.table_list[tn].tid__ticket_price + '€' + '</p>'  //标题中的“单号”
                         htmls += '</div>'
                         htmls += '<div class="order">' //每张Ticket的“内容栏”：菜名、数量、（后续加入备注）
 
                             for(let order in data.data){
                                 console.log(data.data[order]);
-                                if(data.data[order].table_num == data.table_list[tn]){
+                                if(data.data[order].table_num == data.table_list[tn].tid__table_num){
 
-                                    htmls += '<p>' + data.data[order].quantity + '  ' + data.data[order].dname + '</p>';
+                                    htmls += '<p>' + data.data[order].quantity + '  ' + data.data[order].dname +
+                                        '  ' +  data.data[order].dprice + '  | ' +  data.data[order].dprice * data.data[order].quantity + '</p>';
                                 }
 
                             }

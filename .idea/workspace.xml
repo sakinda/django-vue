@@ -1,12 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/restaurant_beta_02/views.py" line="79" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="fbf4521b-33dd-443a-82c2-d3c5e49c278f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/restaurantBeta02/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/restaurantBeta02/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/iconfont/demo.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/iconfont/demo_index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/iconfont/iconfont.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/iconfont/iconfont.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/iconfont/iconfont.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/iconfont/iconfont.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/iconfont/iconfont.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/iconfont/iconfont.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/iconfont/iconfont.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/iconfont/iconfont.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/css/about.060bfd2c.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/css/app.aa22408c.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/css/chunk-vendors.ea9cb855.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/down_arrow.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/fonts/MaterialIcons-Regular.2a61b00f.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/fonts/MaterialIcons-Regular.51cf1d64.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/fonts/MaterialIcons-Regular.703cf8f2.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/fonts/MaterialIcons-Regular.84a37de8.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/fonts/iconfont.3efba44a.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/fonts/iconfont.4fc759b5.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/fonts/iconfont.63190d27.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/home.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/icon_arrow.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/icon_remove.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/img/logoxx.21a49d07.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/jQuery3.5.1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/jquery-3.5.1.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/js/about.55a1b384.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/js/about.55a1b384.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/js/app.7b33dac2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/js/app.7b33dac2.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/js/chunk-vendors.dac61fc5.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/js/chunk-vendors.dac61fc5.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/style.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/static/up_arrow.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/restaurant_beta_02/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/restaurant_beta_02/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/restaurant_beta_02/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/restaurant_beta_02/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/restaurant_beta_02/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/restaurant_beta_02/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/test.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/test.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -41,33 +82,6 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/testService.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8949">
-              <caret line="471" column="7" selection-start-line="471" selection-start-column="7" selection-end-line="471" selection-end-column="7" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/static/style.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7372">
-              <caret line="388" column="14" selection-start-line="388" selection-start-column="4" selection-end-line="388" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/salle.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="17" column="44" selection-start-line="14" selection-start-column="8" selection-end-line="17" selection-end-column="44" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/utiles/scriptInsertDB.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="2812">
@@ -79,11 +93,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/restaurant_beta_02/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="506">
-              <caret line="35" column="4" lean-forward="true" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="89" />
+            <state relative-caret-position="392">
+              <caret line="34" column="66" selection-start-line="34" selection-start-column="66" selection-end-line="34" selection-end-column="66" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -91,11 +105,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/restaurant_beta_02/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="438">
-              <caret line="583" selection-start-line="583" selection-end-line="586" selection-end-column="33" />
+            <state relative-caret-position="426">
+              <caret line="223" column="59" lean-forward="true" selection-start-line="223" selection-start-column="59" selection-end-line="223" selection-end-column="59" />
             </state>
           </provider>
         </entry>
@@ -103,8 +117,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/restaurant_beta_02/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="467">
-              <caret line="197" column="33" lean-forward="true" selection-start-line="197" selection-start-column="33" selection-end-line="197" selection-end-column="33" />
+            <state relative-caret-position="206">
+              <caret line="162" column="13" selection-start-line="162" selection-start-column="4" selection-end-line="162" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/test.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="613">
+              <caret line="218" column="46" selection-start-line="218" selection-start-column="46" selection-end-line="218" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -112,8 +135,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/restaurantBeta02/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="88" column="28" lean-forward="true" selection-start-line="88" selection-start-column="28" selection-end-line="88" selection-end-column="28" />
+            <state relative-caret-position="1615">
+              <caret line="88" column="28" selection-start-line="88" selection-start-column="28" selection-end-line="88" selection-end-column="28" />
               <folding>
                 <element signature="e#314#323#0" expanded="true" />
               </folding>
@@ -145,36 +168,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>context</find>
-      <find>1618912204</find>
-      <find>RetriveAPIView</find>
+      <find>code__dname</find>
       <find>testticket2</find>
+      <find>'code__dfrname</find>
+      <find>testticketdetailpaied</find>
+      <find>his</find>
+      <find>dfrname</find>
+      <find>testprintlist</find>
+      <find>data_order</find>
+      <find>dataticket</find>
+      <find>testtickets</find>
       <find>ticket_status</find>
+      <find>testpatchticket</find>
+      <find>prepa</find>
+      <find>orderList</find>
+      <find>TestOrderGroupby</find>
+      <find>emerge</find>
       <find>group</find>
-      <find>testticketdetail</find>
-      <find>PHPSESSID</find>
-      <find>else if</find>
-      <find>testxhr2</find>
-      <find>get_queryset</find>
-      <find>打包</find>
-      <find>get_qu</find>
-      <find>PHPSE</find>
-      <find>cookie</find>
-      <find>type</find>
-      <find>117</find>
-      <find>testdishordergroupby</find>
-      <find>get</find>
-      <find>emer</find>
-      <find>delivery</find>
-      <find>delivery_man</find>
-      <find>filter</find>
-      <find>testalldish</find>
-      <find>testticketordergroupby2</find>
-      <find>plat</find>
-      <find>员</find>
-      <find>print</find>
-      <find>testticketlist</find>
-      <find>DestroyAPIView</find>
+      <find>sorted</find>
+      <find>testdishordergroupby2</find>
+      <find>DataTicketSerializer</find>
+      <find>testticketlistnopaied</find>
+      <find>groupBy</find>
+      <find>prepare_status</find>
+      <find>data_ticket</find>
+      <find>dataTicket</find>
+      <find>served</find>
+      <find>is_served</find>
+      <find>emergency</find>
+      <find>is_ser</find>
+      <find>order_id</find>
     </findStrings>
     <replaceStrings>
       <replace>ordered_page</replace>
@@ -198,13 +221,13 @@
         <option value="$PROJECT_DIR$/utiles/test3分开.py" />
         <option value="$PROJECT_DIR$/utiles/test.py" />
         <option value="$PROJECT_DIR$/utiles/test4字典化.py" />
-        <option value="$PROJECT_DIR$/templates/test.html" />
         <option value="$PROJECT_DIR$/templates/salle.html" />
         <option value="$PROJECT_DIR$/static/style.css" />
         <option value="$PROJECT_DIR$/templates/testService.html" />
         <option value="$PROJECT_DIR$/restaurantBeta02/settings.py" />
-        <option value="$PROJECT_DIR$/restaurant_beta_02/models.py" />
+        <option value="$PROJECT_DIR$/templates/test.html" />
         <option value="$PROJECT_DIR$/restaurant_beta_02/urls.py" />
+        <option value="$PROJECT_DIR$/restaurant_beta_02/models.py" />
         <option value="$PROJECT_DIR$/restaurant_beta_02/views.py" />
       </list>
     </option>
@@ -212,8 +235,8 @@
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-14" />
     <option name="y" value="-14" />
-    <option name="width" value="2764" />
-    <option name="height" value="1782" />
+    <option name="width" value="1847" />
+    <option name="height" value="1714" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -221,7 +244,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -245,10 +267,16 @@
               <item name="restaurantBeta02" type="462c0819:PsiDirectoryNode" />
               <item name="restaurantBeta02" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="restaurantBeta02" type="b2602c69:ProjectViewProjectNode" />
+              <item name="restaurantBeta02" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -258,7 +286,7 @@
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Python" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -478,23 +506,40 @@
       <workItem from="1619790498853" duration="24220000" />
       <workItem from="1620636415613" duration="22651000" />
       <workItem from="1621069013184" duration="17593000" />
-      <workItem from="1621339811903" duration="14660000" />
+      <workItem from="1621339811903" duration="14832000" />
+      <workItem from="1621713734719" duration="10275000" />
+      <workItem from="1622410547628" duration="7145000" />
+      <workItem from="1623779407001" duration="4069000" />
+      <workItem from="1624377252057" duration="5744000" />
+      <workItem from="1625480086747" duration="894000" />
+      <workItem from="1626559214339" duration="3308000" />
+      <workItem from="1626785822163" duration="274000" />
+      <workItem from="1626803639538" duration="621000" />
+      <workItem from="1635193741279" duration="4137000" />
+      <workItem from="1646069603255" duration="11122000" />
+      <workItem from="1667047899375" duration="1249000" />
+      <workItem from="1675887058819" duration="60930000" />
+      <workItem from="1680008331519" duration="19350000" />
+      <workItem from="1681946272303" duration="20241000" />
+      <workItem from="1682601307670" duration="28576000" />
+      <workItem from="1683811387692" duration="12675000" />
+      <workItem from="1684105328439" duration="27527000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="620074000" />
+    <option name="totallyTimeSpent" value="838383000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1577" height="1016" extended-state="6" />
+    <frame x="-7" y="-7" width="1577" height="1008" extended-state="6" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.14858645" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.17948718" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" order="0" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="1" visible="true" weight="0.14463277" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="1" visible="true" weight="0.20296465" />
       <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="3" />
+      <window_info anchor="bottom" id="Version Control" order="3" weight="0.3295325" />
       <window_info anchor="bottom" id="Python Console" order="4" weight="0.3295711" />
       <window_info anchor="bottom" id="Docker" order="5" show_stripe_button="false" />
       <window_info anchor="bottom" id="Message" order="6" />
@@ -508,7 +553,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.24983564" />
-      <window_info anchor="right" id="SciView" order="4" weight="0.019723866" />
+      <window_info anchor="right" id="SciView" order="4" visible="true" weight="0.019723866" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -540,16 +585,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="557">
           <caret line="163" column="10" selection-start-line="163" selection-start-column="10" selection-end-line="163" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/restaurantBeta02/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="18" column="15" selection-start-line="18" selection-start-column="15" selection-end-line="18" selection-end-column="15" />
-          <folding>
-            <element signature="e#632#664#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -621,13 +656,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/test.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1957">
-          <caret line="103" column="47" selection-start-line="103" selection-start-column="47" selection-end-line="103" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/migrations/0016_auto_20210521_2114.py" />
     <entry file="file://$PROJECT_DIR$/templates/testService.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8949">
@@ -649,6 +678,43 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/manage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/migrations/0015_auto_20210521_2115.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="16" column="10" lean-forward="true" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/migrations/0014_dataticket_ticket_restaurant_count.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/migrations/0013_dataticket_payment_history.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/migrations/0016_auto_20230223_1901.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="15" column="64" lean-forward="true" selection-start-line="15" selection-start-column="64" selection-end-line="15" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/restaurantBeta02/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="18" column="15" selection-start-line="18" selection-start-column="15" selection-end-line="18" selection-end-column="15" />
+          <folding>
+            <element signature="e#632#664#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/utiles/scriptInsertDB.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2812">
@@ -661,8 +727,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/restaurantBeta02/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="88" column="28" lean-forward="true" selection-start-line="88" selection-start-column="28" selection-end-line="88" selection-end-column="28" />
+        <state relative-caret-position="1615">
+          <caret line="88" column="28" selection-start-line="88" selection-start-column="28" selection-end-line="88" selection-end-column="28" />
           <folding>
             <element signature="e#314#323#0" expanded="true" />
           </folding>
@@ -678,41 +744,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/migrations/0016_auto_20210521_2114.py">
+    <entry file="file://$PROJECT_DIR$/templates/test.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/migrations/0015_auto_20210521_2115.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="16" column="10" lean-forward="true" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
+        <state relative-caret-position="613">
+          <caret line="218" column="46" selection-start-line="218" selection-start-column="46" selection-end-line="218" selection-end-column="46" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/restaurant_beta_02/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="467">
-          <caret line="197" column="33" lean-forward="true" selection-start-line="197" selection-start-column="33" selection-end-line="197" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="438">
-          <caret line="583" selection-start-line="583" selection-end-line="586" selection-end-column="33" />
+        <state relative-caret-position="206">
+          <caret line="162" column="13" selection-start-line="162" selection-start-column="4" selection-end-line="162" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/restaurant_beta_02/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
-          <caret line="35" column="4" lean-forward="true" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="89" />
+        <state relative-caret-position="392">
+          <caret line="34" column="66" selection-start-line="34" selection-start-column="66" selection-end-line="34" selection-end-column="66" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/restaurant_beta_02/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="426">
+          <caret line="223" column="59" lean-forward="true" selection-start-line="223" selection-start-column="59" selection-end-line="223" selection-end-column="59" />
         </state>
       </provider>
     </entry>

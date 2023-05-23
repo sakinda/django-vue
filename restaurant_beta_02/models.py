@@ -35,6 +35,7 @@ class DataDish(models.Model):
     dtax = models.DecimalField(max_digits=3, decimal_places=2)
     dingredients = models.CharField(max_length=512, blank=True, null=True)
     dondelete = models.IntegerField(default=0)
+    dfrname = models.CharField(max_length=255, default=" ")
 
     class Meta:
         managed = True
@@ -84,7 +85,8 @@ class DataTicket(models.Model):
     client_address = models.CharField(verbose_name='客户地址', max_length=250, null=True, blank=True)
     client_telephone = models.CharField(verbose_name='客户电话', max_length=20, null=True, blank=True)
     ticket_note = models.CharField(verbose_name='订单备注', max_length=255, null=True, blank=True)
-    ticket_status = models.IntegerField(verbose_name='订单状态', default=1, choices=((0, '预约订单'), (1, '准备中'), (2, '已完成'), (3, '已取消')))
+    ticket_status = models.IntegerField(verbose_name='订单状态', default=0, choices=((0, '预约订单'), (1, '准备中'), (2, '已完成'), (3, '已取消'), (4, '已上菜')))
+    ticket_is_served = models.IntegerField(verbose_name='订单出菜状态', default=0, choices=((0, '未完全出齐'), (1, '已全部出齐')))
     payment_status = models.IntegerField(verbose_name='支付状态', default=0, choices=((0, '未付款'), (1, '付款中'), (2, '已付款')))
     ticket_price = models.DecimalField(verbose_name='整单价格', default=0, max_digits=10, decimal_places=2)
     ticket_discount = models.DecimalField(verbose_name='整单折扣', default=1.00, max_digits=3, decimal_places=2)
@@ -102,13 +104,13 @@ class DataTicket(models.Model):
     delivery_platform = models.ForeignKey(DataDeliveryPlatform, on_delete=models.CASCADE, verbose_name='送餐平台',
                                           db_column='f_delivery_platform', default=12)
     ticket_reduction = models.DecimalField(verbose_name='整单减免', default=0, max_digits=10, decimal_places=2)
-    ticket_emergency = models.IntegerField(verbose_name='加急状态', choices=((0, '普通'), (1, '优先'), (2, '最紧急')), default=0)
+    ticket_emergency = models.IntegerField(verbose_name='加急状态', choices=((0, '优先'), (1, '普通'), (2, '延后')), default=1)
     finish_time = models.CharField(max_length=32, verbose_name='完成时间', null=True, blank=True)
     ticket_tax10 = models.DecimalField(verbose_name='tva10%', default=0, max_digits=10, decimal_places=2)
     ticket_tax20 = models.DecimalField(verbose_name='tva20%', default=0, max_digits=10, decimal_places=2)
     ticket_tax = models.DecimalField(verbose_name='tva总', default=0, max_digits=10, decimal_places=2)
     delivery_time = models.CharField(verbose_name='配送时间', max_length=30, null=True, blank=True)
-    payment_history = models.CharField(verbose_name='付款历史', max_length=255, null=True, blank=True)
+    payment_history = models.CharField(verbose_name='付款历史', max_length=1024, null=True, blank=True)
     ticket_restaurant_count = models.IntegerField(verbose_name='饭票张数', default=0)
 
     class Meta:
@@ -157,10 +159,11 @@ class DataOrder(models.Model):
     quantity = models.IntegerField()
     # o_note = models.ForeignKey(DataSpecialNote, db_column='o_note', verbose_name='菜品备注',on_delete=models.CASCADE, default=1)
     o_note = models.CharField(db_column='o_note', verbose_name='菜品备注', max_length=250)
-    prepare_status = models.IntegerField(verbose_name='准备状态', default=1, choices=((0, '预定'), (1, '准备中'),  (2, '已备齐'), (3, '已完成')))
+    prepare_status = models.IntegerField(verbose_name='准备状态', default=1, choices=((0, '预定'), (1, '准备中'),  (2, '已备齐'), (3, '已完成'), (4, '已上菜')))
+    is_served = models.IntegerField(verbose_name='出菜状态', default=0, choices=((0, '未上菜'), (1, '已上菜')))
     discount_type = models.IntegerField(verbose_name='打折类型', choices=((0, '参与整单打折'), (1, '不参与整单打折')), default=0)
     extra_discount = models.DecimalField(verbose_name='特殊折扣', default=1.00, max_digits=3, decimal_places=2)
-    emergency = models.IntegerField(verbose_name='加急状态', choices=((0, '普通'), (1, '优先'), (2, '最紧急')), default=0)
+    emergency = models.IntegerField(verbose_name='加急状态', choices=((0, '优先'), (1, '普通'), (2, '延后')), default=1)
     tid = models.ForeignKey(DataTicket, db_column='tid', on_delete=models.CASCADE, verbose_name='订单id')
     person = models.IntegerField(verbose_name='客户', default=1)
     finish_time = models.CharField(max_length=32, verbose_name='完成时间', null=True, blank=True)
