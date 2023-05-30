@@ -91,6 +91,17 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'restaurant_beta_02',
+#         'USER': 'root',
+#         'PASSWORD': '198412',
+#         'HOST': '52.47.194.59',
+#         'PORT': 3306,
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
