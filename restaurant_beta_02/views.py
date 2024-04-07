@@ -33,7 +33,7 @@ class DataTicketSerializer(serializers.ModelSerializer):
         orders_list2 = DataOrder.objects.prefetch_related('code').filter(tid__ticket_id=obj.ticket_id).values('order_id',
         'order_time', 'quantity', 'o_note', 'prepare_status', 'discount_type', 'extra_discount', 'emergency', 'is_served',
         'tid_id', 'person', 'finish_time', 'code__dname', 'code__dfrname', 'code__dprice', 'code__dcategory', 'code__dsubcategory',
-        'code__dingredients', 'code__dtax', 'code__dprice')
+        'code__dingredients', 'code__dtax', 'code__dprice', 'code__drecipe', 'tid__ticket_pickup_time')
         # print(orders_list2)
         orders_list = DataDish.objects.select_related('DataOrder').filter(orders__tid__ticket_id=obj.ticket_id) # 这里的orders是在DataDish中定义的related_name外键字段
         return orders_list2
@@ -42,7 +42,7 @@ class DataTicketSerializer(serializers.ModelSerializer):
         orders_list = DataOrder.objects.prefetch_related('code').filter(tid__ticket_id=obj.ticket_id).values('order_id',
         'order_time', 'quantity', 'o_note', 'prepare_status', 'discount_type', 'extra_discount', 'emergency', 'is_served',
         'tid_id', 'person', 'finish_time', 'code__dname', 'code__dfrname', 'code__dprice', 'code__dcategory', 'code__dsubcategory',
-        'code__dingredients', 'code__dtax', 'code__dprice').order_by('code__dsubcategory', 'code__dcode')
+        'code__dingredients', 'code__dtax', 'code__dprice', 'code__drecipe', 'tid__ticket_pickup_time').order_by('code__dsubcategory', 'code__dcode')
         # print(orders_list)
         return orders_list
 
@@ -56,7 +56,7 @@ class DataTicketSerializer(serializers.ModelSerializer):
                                                                         ~Q(code__dcategory=15)).values('order_id',
         'order_time', 'quantity', 'o_note', 'prepare_status', 'discount_type', 'extra_discount', 'emergency', 'is_served',
         'tid_id', 'person', 'finish_time', 'code__dname', 'code__dfrname', 'code__dprice', 'code__dcategory', 'code__dsubcategory',
-        'code__dingredients', 'code__dtax', 'code__dprice').order_by('code__dsubcategory', 'code__dcode')
+        'code__dingredients', 'code__dtax', 'code__dprice', 'code__drecipe', 'tid__ticket_pickup_time').order_by('code__dsubcategory', 'code__dcode')
         # print(orders_list)
         return orders_list
 
@@ -65,7 +65,7 @@ class DataTicketSerializer(serializers.ModelSerializer):
             .filter(tid__ticket_id=obj.ticket_id).values('code__dname',
                                                          'code__dfrname', 'code__dprice', 'code__dcategory',
                                                          'code__dsubcategory', 'code__dingredients', 'code__dtax',
-                                                         'code__dprice').order_by(
+                                                         'code__dprice', 'code__drecipe', 'tid__ticket_pickup_time').order_by(
             'code__dsubcategory', 'code__dcode').annotate(total_quantity=Sum('quantity'))
         print(orders_list)
         return orders_list
@@ -92,12 +92,13 @@ class DataOrderSerializer(serializers.ModelSerializer):
     ticket = DataTicketSerializer(read_only=True, many=True)
     # tid = DataTicketSerializer(read_only=True, many=True)
     ticket_emergency = serializers.SerializerMethodField()
+    ticket_status = serializers.SerializerMethodField()
 
     class Meta:
         model = DataOrder
         # fields = "__all__"
         fields = ["order_id", "order_time", "quantity", "prepare_status", 'is_served', "discount_type", "extra_discount",
-                  "emergency", "person", "finish_time", "code", "tid", "o_note", "ticket_emergency", "ticket"]
+                  "emergency", "person", "finish_time", "code", "tid", "o_note", "ticket_status", "ticket_emergency", "ticket"]
 
     def get_ticket_emergency(self, obj):
         print(obj.tid.ticket_id)
@@ -107,6 +108,11 @@ class DataOrderSerializer(serializers.ModelSerializer):
         # ticket_emergency = DataTicket.objects.get(ticket_id=obj.tid.ticket_id)
         # ticket_emergency = obj.tid
         return ticket_emergency
+
+    def get_ticket_status(self, obj):
+        ticket_status = DataTicket.objects.filter(ticket_id=obj.tid.ticket_id).values_list(
+            'ticket_status', flat=True)
+        return ticket_status
 
 
 class DataDishSerializer(serializers.ModelSerializer):
@@ -212,14 +218,14 @@ class TestOrderGroupbySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DataDish
-        fields = ['did', 'dname', 'dcategory', 'dsubcategory', 'dingredients', 'orders', 'total_quantity', 'total_quantity_salle']
+        fields = ['did', 'dname', 'dcode', 'dcategory', 'dsubcategory', 'dingredients', 'orders', 'total_quantity', 'total_quantity_salle']
 
     def get_total_quantity(self, obj):
         # print('目标：', obj.dname)
         # print(DataDish.objects.filter(Q(dname=obj.dname) & Q(orders__finish_time__isnull=True)).values_list())
         # print(obj.dname)
         total_q = DataDish.objects.filter(Q(dname=obj.dname) & Q(orders__finish_time__isnull=True) & Q(
-                    orders__tid__ticket_status=1) & Q(orders__tid__payment_status=0) & ~Q(
+                    orders__tid__ticket_status=1) & ~Q(
                     orders__prepare_status=0) & ~Q(
                     orders__prepare_status=3)).values_list(
             'dname').annotate(total_quantity=Sum('orders__quantity'))
@@ -533,7 +539,7 @@ class TestTicketListNoPaiedView(ListAPIView):
         depth: 1
 
     def get_queryset(self):
-        tickets = DataTicket.objects.filter(Q(payment_status=0) | Q(payment_status=1))
+        tickets = DataTicket.objects.filter(Q(payment_status=0) | Q(payment_status=1) | Q(payment_status=2))
         return tickets
 
 
@@ -669,13 +675,13 @@ class TestDishGroupby2View(ListAPIView):
         elif self.kwargs['pk'] == '0':
             # print('进入方法0')
             dishes = DataDish.objects.filter(
-                Q(orders__tid__payment_status=0) & Q(
+                Q(
                     orders__tid__ticket_status=1) & ~Q(
                     orders__prepare_status=0) & ~Q(
                     orders__prepare_status=3) & Q(
                     orders__tid__zrapport_condition=0) & ~Q(
                     orders__tid__ticket_emergency=2)).order_by(
-                'dsubcategory').distinct()
+                'dsubcategory', 'dcode').distinct()
             return dishes
         elif self.kwargs['pk'] == '1':
             # print('进入方法1')

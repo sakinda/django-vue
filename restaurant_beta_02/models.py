@@ -34,6 +34,7 @@ class DataDish(models.Model):
     dprice = models.DecimalField(max_digits=10, decimal_places=2)
     dtax = models.DecimalField(max_digits=3, decimal_places=2)
     dingredients = models.CharField(max_length=512, blank=True, null=True)
+    drecipe = models.CharField(max_length=512, blank=True, null=True)
     dondelete = models.IntegerField(default=0)
     dfrname = models.CharField(max_length=255, default=" ")
 
@@ -78,6 +79,7 @@ class DataDeliveryPlatform(models.Model):
 class DataTicket(models.Model):
     ticket_id = models.CharField(primary_key=True, max_length=20)
     ticket_time = models.CharField(verbose_name='订单时间', max_length=20)
+    ticket_pickup_time = models.CharField(verbose_name='取餐时间', max_length=20, default=0)
     type = models.IntegerField(verbose_name='订单类型', default=0, choices=((0, '堂食'), (1, '打包'), (2, '外送')))
     table_num = models.CharField(verbose_name='订单号/桌号', max_length=20)
     person_quantity = models.IntegerField(default=1)
