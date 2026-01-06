@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Q, Sum, F
 from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -7,12 +7,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import requests
+import json
 
 from .models import *
 from django.views import View
 from rest_framework import serializers, status
 from rest_framework.generics import ListAPIView, GenericAPIView, UpdateAPIView, CreateAPIView, DestroyAPIView, \
     RetrieveAPIView
+from django.core.cache import cache
 
 tId = '1624561370'  # 关机后每15分钟更新一次
 phpId = '97gbuipcup949jc9png2t02nl7'  # 每周更新一次
@@ -29,46 +31,125 @@ class DataTicketSerializer(serializers.ModelSerializer):
         fields = "__all__"
         # depth = 1
 
+    def _orders(self, obj):
+        ctx = self.context.get('orders_by_ticket')
+        if ctx is not None:
+            return ctx.get(obj.ticket_id, [])
+        return list(DataOrder.objects.select_related('code').filter(tid__ticket_id=obj.ticket_id))
+
     def get_orderList(self, obj):
-        orders_list2 = DataOrder.objects.prefetch_related('code').filter(tid__ticket_id=obj.ticket_id).values('order_id',
-        'order_time', 'quantity', 'o_note', 'prepare_status', 'discount_type', 'extra_discount', 'emergency', 'is_served',
-        'tid_id', 'person', 'finish_time', 'code', 'code__dname', 'code__dfrname', 'code__dprice', 'code__dcategory', 'code__dsubcategory',
-        'code__dingredients', 'code__dtax', 'code__dprice', 'code__drecipe', 'tid__ticket_pickup_time')
-        # print(orders_list2)
-        orders_list = DataDish.objects.select_related('DataOrder').filter(orders__tid__ticket_id=obj.ticket_id) # 这里的orders是在DataDish中定义的related_name外键字段
-        return orders_list2
+        orders = self._orders(obj)
+        return [{
+            'order_id': o.order_id,
+            'order_time': o.order_time,
+            'quantity': o.quantity,
+            'o_note': o.o_note,
+            'prepare_status': o.prepare_status,
+            'discount_type': o.discount_type,
+            'extra_discount': o.extra_discount,
+            'emergency': o.emergency,
+            'is_served': o.is_served,
+            'tid_id': o.tid_id,
+            'person': o.person,
+            'finish_time': o.finish_time,
+            'code': o.code.dcode,
+            'code__dname': o.code.dname,
+            'code__dfrname': o.code.dfrname,
+            'code__dprice': o.code.dprice,
+            'code__dcategory': o.code.dcategory,
+            'code__dsubcategory': o.code.dsubcategory_id,
+            'code__dingredients': o.code.dingredients,
+            'code__dtax': o.code.dtax,
+            'code__dprice': o.code.dprice,
+            'code__drecipe': o.code.drecipe,
+            'tid__ticket_pickup_time': obj.ticket_pickup_time
+        } for o in orders]
 
     def get_sortedOrderList(self, obj):
-        orders_list = DataOrder.objects.prefetch_related('code').filter(tid__ticket_id=obj.ticket_id).values('order_id',
-        'order_time', 'quantity', 'o_note', 'prepare_status', 'discount_type', 'extra_discount', 'emergency', 'is_served',
-        'tid_id', 'person', 'finish_time', 'code', 'code__dname', 'code__dfrname', 'code__dprice', 'code__dcategory', 'code__dsubcategory',
-        'code__dingredients', 'code__dtax', 'code__dprice', 'code__drecipe', 'tid__ticket_pickup_time').order_by('code__dsubcategory', 'code__dcode')
-        # print(orders_list)
-        return orders_list
+        orders = sorted(self._orders(obj), key=lambda o: (o.code.dsubcategory_id, o.code.dcode))
+        return [{
+            'order_id': o.order_id,
+            'order_time': o.order_time,
+            'quantity': o.quantity,
+            'o_note': o.o_note,
+            'prepare_status': o.prepare_status,
+            'discount_type': o.discount_type,
+            'extra_discount': o.extra_discount,
+            'emergency': o.emergency,
+            'is_served': o.is_served,
+            'tid_id': o.tid_id,
+            'person': o.person,
+            'finish_time': o.finish_time,
+            'code': o.code.dcode,
+            'code__dname': o.code.dname,
+            'code__dfrname': o.code.dfrname,
+            'code__dprice': o.code.dprice,
+            'code__dcategory': o.code.dcategory,
+            'code__dsubcategory': o.code.dsubcategory_id,
+            'code__dingredients': o.code.dingredients,
+            'code__dtax': o.code.dtax,
+            'code__dprice': o.code.dprice,
+            'code__drecipe': o.code.drecipe,
+            'tid__ticket_pickup_time': obj.ticket_pickup_time
+        } for o in orders]
 
     def get_sortedOrderListNoDrink(self, obj):
-        orders_list = DataOrder.objects.prefetch_related('code').filter(Q(tid__ticket_id=obj.ticket_id) &
-                                                                        ~Q(code__dcategory=10) &
-                                                                        ~Q(code__dcategory=11) &
-                                                                        ~Q(code__dcategory=12) &
-                                                                        ~Q(code__dcategory=13) &
-                                                                        ~Q(code__dcategory=14) &
-                                                                        ~Q(code__dcategory=15)).values('order_id',
-        'order_time', 'quantity', 'o_note', 'prepare_status', 'discount_type', 'extra_discount', 'emergency', 'is_served',
-        'tid_id', 'person', 'finish_time', 'code', 'code__dname', 'code__dfrname', 'code__dprice', 'code__dcategory', 'code__dsubcategory',
-        'code__dingredients', 'code__dtax', 'code__dprice', 'code__drecipe', 'tid__ticket_pickup_time').order_by('code__dsubcategory', 'code__dcode')
-        # print(orders_list)
-        return orders_list
+        excludes = {'10', '11', '12', '13', '14', '15'}
+        orders = [o for o in self._orders(obj) if str(o.code.dcategory) not in excludes]
+        orders = sorted(orders, key=lambda o: (o.code.dsubcategory_id, o.code.dcode))
+        return [{
+            'order_id': o.order_id,
+            'order_time': o.order_time,
+            'quantity': o.quantity,
+            'o_note': o.o_note,
+            'prepare_status': o.prepare_status,
+            'discount_type': o.discount_type,
+            'extra_discount': o.extra_discount,
+            'emergency': o.emergency,
+            'is_served': o.is_served,
+            'tid_id': o.tid_id,
+            'person': o.person,
+            'finish_time': o.finish_time,
+            'code': o.code.dcode,
+            'code__dname': o.code.dname,
+            'code__dfrname': o.code.dfrname,
+            'code__dprice': o.code.dprice,
+            'code__dcategory': o.code.dcategory,
+            'code__dsubcategory': o.code.dsubcategory_id,
+            'code__dingredients': o.code.dingredients,
+            'code__dtax': o.code.dtax,
+            'code__dprice': o.code.dprice,
+            'code__drecipe': o.code.drecipe,
+            'tid__ticket_pickup_time': obj.ticket_pickup_time
+        } for o in orders]
 
     def get_sortedOrderListGroupBy(self, obj):
-        orders_list = DataOrder.objects.prefetch_related('code')\
-            .filter(tid__ticket_id=obj.ticket_id).values('code','code__dname',
-                                                         'code__dfrname', 'code__dprice', 'code__dcategory',
-                                                         'code__dsubcategory', 'code__dingredients', 'code__dtax',
-                                                         'code__dprice', 'code__drecipe', 'tid__ticket_pickup_time').order_by(
-            'code__dsubcategory', 'code__dcode').annotate(total_quantity=Sum('quantity'))
-        print(orders_list)
-        return orders_list
+        orders = self._orders(obj)
+        totals = {}
+        for o in orders:
+            k = o.code.dcode
+            totals[k] = totals.get(k, 0) + o.quantity
+        unique_codes = {}
+        for o in orders:
+            k = o.code.dcode
+            if k not in unique_codes:
+                unique_codes[k] = o
+        rows = [{
+            'code': k,
+            'code__dname': v.code.dname,
+            'code__dfrname': v.code.dfrname,
+            'code__dprice': v.code.dprice,
+            'code__dcategory': v.code.dcategory,
+            'code__dsubcategory': v.code.dsubcategory_id,
+            'code__dingredients': v.code.dingredients,
+            'code__dtax': v.code.dtax,
+            'code__dprice': v.code.dprice,
+            'code__drecipe': v.code.drecipe,
+            'tid__ticket_pickup_time': obj.ticket_pickup_time,
+            'total_quantity': totals[k]
+        } for k, v in unique_codes.items()]
+        rows.sort(key=lambda r: (r['code__dsubcategory'], r['code']))
+        return rows
         # print('obj：', obj) # obj是传进来的实例(instance)，由__str__决定显示的内容，但实际是一个完整的实例，包含了所有字段
         # total_q = DataDish.objects.filter(Q(orders__tid__table_num=self.context['tNum']) & Q(dname=obj.dname) & Q(
         #     orders__finish_time__isnull=True)).values_list('dname').annotate(total_quantity=Sum('orders__quantity'))
@@ -101,18 +182,10 @@ class DataOrderSerializer(serializers.ModelSerializer):
                   "emergency", "person", "finish_time", "code", "tid", "o_note", "ticket_status", "ticket_emergency", "ticket"]
 
     def get_ticket_emergency(self, obj):
-        print(obj.tid.ticket_id)
-        print(DataTicket.objects.filter(ticket_id=obj.tid.ticket_id))
-        ticket_emergency = DataTicket.objects.filter(ticket_id=obj.tid.ticket_id).values_list(
-            'ticket_emergency', flat=True)
-        # ticket_emergency = DataTicket.objects.get(ticket_id=obj.tid.ticket_id)
-        # ticket_emergency = obj.tid
-        return ticket_emergency
+        return [obj.tid.ticket_emergency]
 
     def get_ticket_status(self, obj):
-        ticket_status = DataTicket.objects.filter(ticket_id=obj.tid.ticket_id).values_list(
-            'ticket_status', flat=True)
-        return ticket_status
+        return [obj.tid.ticket_status]
 
 
 class DataDishSerializer(serializers.ModelSerializer):
@@ -510,6 +583,16 @@ class TestTicketsView(ListAPIView):
         print(ticket_using)
         return ticket_using
 
+    def get_serializer_context(self):
+        qs = self.get_queryset()
+        tickets = list(qs.values_list('ticket_id', flat=True))
+        orders = DataOrder.objects.select_related('code').filter(tid__ticket_id__in=tickets)
+        orders_by_ticket = {}
+        for o in orders:
+            orders_by_ticket.setdefault(o.tid.ticket_id, []).append(o)
+        return {'orders_by_ticket': orders_by_ticket}
+
+
 
 class TestTicketDetailView(ListAPIView):
     serializer_class = DataTicketSerializer
@@ -689,91 +772,158 @@ class TestDishGroupbyView(ListAPIView):
             return dishes
 
 
-class TestDishGroupby2View(ListAPIView):
-    # serializer_class = TestOrderGroupbySerializer
-    def get_serializer_class(self):
-        if self.kwargs['pk'] == '3':
-            return TestOrderGroupbyAllSerializer
-        else:
-            return TestOrderGroupbySerializer
-
-    def get_queryset(self):
-        if self.kwargs['pk'] == '2':
-            # print('进入方法2')
-            dishes = DataDish.objects.filter(
-                Q(orders__finish_time__isnull=True) & Q(orders__isnull=False) & Q(
-                    orders__tid__payment_status=0) & Q(
-                    orders__tid__ticket_status=1) & Q(
-                    orders__tid__zrapport_condition=0) & Q(
-                    orders__prepare_status=1)).order_by(
-                'dsubcategory').distinct()
-            print(dishes)
-            return dishes
-        elif self.kwargs['pk'] == '0':
-            # print('进入方法0')
-            dishes = DataDish.objects.filter(
-                Q(
-                    orders__tid__ticket_status=1) & ~Q(
-                    orders__prepare_status=0) & ~Q(
-                    orders__prepare_status=3) & Q(
-                    orders__tid__zrapport_condition=0) & ~Q(
-                    orders__tid__ticket_emergency=2)).order_by(
-                'dsubcategory', 'dcode').distinct()
-            return dishes
-        elif self.kwargs['pk'] == '1':
-            # print('进入方法1')
-            dishes = DataDish.objects.filter(
-                Q(orders__finish_time__isnull=True) & Q(orders__isnull=False) & Q(
-                    orders__tid__payment_status=0) & Q(
-                    orders__tid__ticket_status=1) & Q(
-                    orders__tid__zrapport_condition=0) & Q(
-                    orders__tid__ticket_emergency=2) & Q(
-                    orders__prepare_status=1)).order_by(
-                'dsubcategory').distinct()
-            return dishes
-        # 查看所有菜品（无任何筛选要求）
-        elif self.kwargs['pk'] == '3':
-            # print('进入方法1')
-            dishes = DataDish.objects.filter(
-                Q(orders__finish_time__isnull=True) & Q(orders__isnull=False) & Q(
-                    orders__tid__zrapport_condition=0)).order_by(
-                'dsubcategory').distinct()
-            return dishes
+class TestDishGroupby2View(APIView):
+    def get(self, request, pk):
+        page = int(request.GET.get('page', '1'))
+        size = int(request.GET.get('size', '200'))
+        qs = DataOrder.objects.select_related('code')
+        if pk == '2':
+            qs = qs.filter(
+                (Q(finish_time__isnull=True) | Q(finish_time='')) &
+                Q(tid__payment_status=0) &
+                Q(tid__ticket_status=1) &
+                Q(tid__zrapport_condition=0) &
+                Q(prepare_status=1)
+            )
+        elif pk == '0':
+            qs = qs.filter(
+                Q(tid__ticket_status=1) &
+                ~Q(prepare_status=0) &
+                ~Q(prepare_status=3) &
+                Q(tid__zrapport_condition=0) &
+                ~Q(tid__ticket_emergency=2)
+            )
+        elif pk == '1':
+            qs = qs.filter(
+                (Q(finish_time__isnull=True) | Q(finish_time='')) &
+                Q(tid__payment_status=0) &
+                Q(tid__ticket_status=1) &
+                Q(tid__zrapport_condition=0) &
+                Q(tid__ticket_emergency=2) &
+                Q(prepare_status=1)
+            )
+        elif pk == '3':
+            qs = qs.filter(
+                Q(finish_time__isnull=True) &
+                Q(tid__zrapport_condition=0)
+            )
+        agg = qs.annotate(
+            did=F('code__did'),
+            dname=F('code__dname'),
+            dcode=F('code'),
+            dcategory=F('code__dcategory'),
+            dsubcategory=F('code__dsubcategory_id'),
+            dingredients=F('code__dingredients'),
+        ).values('did', 'dname', 'dcode', 'dcategory', 'dsubcategory', 'dingredients')\
+         .annotate(total_quantity=Sum('quantity')).order_by('dsubcategory', 'dcode')
+        start = (page - 1) * size
+        end = start + size
+        orders_rows = list(qs.values(
+            'order_id', 'order_time', 'quantity', 'prepare_status', 'is_served',
+            'discount_type', 'extra_discount', 'emergency', 'person', 'finish_time',
+            'code', 'tid_id', 'o_note', 'tid__ticket_status', 'tid__ticket_emergency'
+        ))
+        orders_by_code = {}
+        for o in orders_rows:
+            od = {
+                'order_id': o['order_id'],
+                'order_time': o['order_time'],
+                'quantity': o['quantity'],
+                'prepare_status': o['prepare_status'],
+                'is_served': o['is_served'],
+                'discount_type': o['discount_type'],
+                'extra_discount': float(o['extra_discount']) if o['extra_discount'] is not None else None,
+                'emergency': o['emergency'],
+                'person': o['person'],
+                'finish_time': o['finish_time'],
+                'code': o['code'],
+                'tid': o['tid_id'],
+                'o_note': o['o_note'],
+                'ticket_status': [o['tid__ticket_status']] if o['tid__ticket_status'] is not None else [],
+                'ticket_emergency': [o['tid__ticket_emergency']] if o['tid__ticket_emergency'] is not None else []
+            }
+            orders_by_code.setdefault(o['code'], []).append(od)
+        rows = list(agg[start:end])
+        for r in rows:
+            tq = r.get('total_quantity')
+            if tq is not None:
+                r['total_quantity_salle'] = [tq]
+                r['total_quantity'] = [tq]
+            r['orders'] = orders_by_code.get(r['dcode'], [])
+        payload = json.dumps({'page': page, 'size': size, 'count': agg.count(), 'rows': rows}, separators=(',', ':'))
+        return HttpResponse(payload, content_type='application/json')
 
 
 # 无论是否完成结账或者是否zrapport，菜品都可以获取（原来的那个直接复制过来的）
 # 用于前厅调度系统
-class TestDishGroupby3View(ListAPIView):
-    serializer_class = TestOrderGroupbySerializer
-
-    def get_queryset(self):
-        if self.kwargs['pk'] == '2':
-            print('进入接口testdishordergroupby3/2，调取salleGroupBy数据')
-            # 无论优先级，一律调取
-            dishes = DataDish.objects.filter(
-                Q(orders__tid__ticket_is_served=0) & ~Q(
-                    orders__is_served=1) & Q(
-                    orders__tid__zrapport_condition=0)).order_by(
-                'dsubcategory').distinct()
-            # print(dishes)
-            return dishes
-        elif self.kwargs['pk'] == '0':
-            # print('进入方法0')
-            dishes = DataDish.objects.filter(
-                Q(orders__finish_time__isnull=True) & Q(orders__isnull=False) & Q(
-                    orders__tid__payment_status=0) & Q(
-                    orders__tid__ticket_emergency=0) | Q(
-                    orders__tid__ticket_emergency=1)).order_by(
-                'dsubcategory').distinct()
-            return dishes
-        elif self.kwargs['pk'] == '1':
-            # print('进入方法1')
-            dishes = DataDish.objects.filter(
-                Q(orders__finish_time__isnull=True) & Q(orders__isnull=False) & Q(
-                    orders__tid__payment_status=0) & Q(
-                    orders__tid__ticket_emergency=2)).order_by(
-                'dsubcategory').distinct()
-            return dishes
+class TestDishGroupby3View(APIView):
+    def get(self, request, pk):
+        page = int(request.GET.get('page', '1'))
+        size = int(request.GET.get('size', '200'))
+        qs = DataOrder.objects.select_related('code')
+        if pk == '2':
+            qs = qs.filter(
+                Q(tid__ticket_is_served=0) &
+                ~Q(is_served=1) &
+                Q(tid__zrapport_condition=0)
+            )
+        elif pk == '0':
+            qs = qs.filter(
+                (Q(finish_time__isnull=True) | Q(finish_time='')) &
+                Q(tid__payment_status=0) &
+                (Q(tid__ticket_emergency=0) | Q(tid__ticket_emergency=1))
+            )
+        elif pk == '1':
+            qs = qs.filter(
+                (Q(finish_time__isnull=True) | Q(finish_time='')) &
+                Q(tid__payment_status=0) &
+                Q(tid__ticket_emergency=2)
+            )
+        agg = qs.annotate(
+            did=F('code__did'),
+            dname=F('code__dname'),
+            dcode=F('code'),
+            dcategory=F('code__dcategory'),
+            dsubcategory=F('code__dsubcategory_id'),
+            dingredients=F('code__dingredients'),
+        ).values('did', 'dname', 'dcode', 'dcategory', 'dsubcategory', 'dingredients') \
+         .annotate(total_quantity=Sum('quantity')).order_by('dsubcategory', 'dcode')
+        start = (page - 1) * size
+        end = start + size
+        orders_rows = list(qs.values(
+            'order_id', 'order_time', 'quantity', 'prepare_status', 'is_served',
+            'discount_type', 'extra_discount', 'emergency', 'person', 'finish_time',
+            'code', 'tid_id', 'o_note', 'tid__ticket_status', 'tid__ticket_emergency'
+        ))
+        orders_by_code = {}
+        for o in orders_rows:
+            od = {
+                'order_id': o['order_id'],
+                'order_time': o['order_time'],
+                'quantity': o['quantity'],
+                'prepare_status': o['prepare_status'],
+                'is_served': o['is_served'],
+                'discount_type': o['discount_type'],
+                'extra_discount': float(o['extra_discount']) if o['extra_discount'] is not None else None,
+                'emergency': o['emergency'],
+                'person': o['person'],
+                'finish_time': o['finish_time'],
+                'code': o['code'],
+                'tid': o['tid_id'],
+                'o_note': o['o_note'],
+                'ticket_status': [o['tid__ticket_status']] if o['tid__ticket_status'] is not None else [],
+                'ticket_emergency': [o['tid__ticket_emergency']] if o['tid__ticket_emergency'] is not None else []
+            }
+            orders_by_code.setdefault(o['code'], []).append(od)
+        rows = list(agg[start:end])
+        for r in rows:
+            tq = r.get('total_quantity')
+            if tq is not None:
+                r['total_quantity_salle'] = [tq]
+                r['total_quantity'] = [tq]
+            r['orders'] = orders_by_code.get(r['dcode'], [])
+        payload = json.dumps({'page': page, 'size': size, 'count': agg.count(), 'rows': rows}, separators=(',', ':'))
+        return HttpResponse(payload, content_type='application/json')
 
 
 class TestAllPlatformView(ListAPIView):

@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    # 'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,6 +47,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # 'corsheaders.middleware.CorsMiddleware',
+    "restaurant_beta_02.middlewares.SimpleCorsMiddleware",  # 我的自定义 CORS 处理
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -80,27 +83,31 @@ WSGI_APPLICATION = 'restaurantBeta02.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'restaurant_beta_02',
-        'USER': 'root',
-        'PASSWORD': '198412',
-        'HOST': '127.0.0.1',
-        'PORT': 3306,
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'restaurant_beta_02',
 #         'USER': 'root',
 #         'PASSWORD': '198412',
-#         'HOST': '52.47.194.59',
+#         'HOST': '127.0.0.1',
 #         'PORT': 3306,
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'restaurant_beta_02',
+        'USER': 'root',
+        'PASSWORD': '198412',
+        # 'HOST': '35.180.97.36',
+        'HOST': '127.0.0.1',
+        'PORT': 3306,
+    }
+}
+
+# 允许所有来源访问（测试阶段）
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Password validation
