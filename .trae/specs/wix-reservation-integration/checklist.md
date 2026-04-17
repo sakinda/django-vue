@@ -1,0 +1,5 @@
+- [x] `restaurant_beta_02/views.py` 中包含 `WixReservationListView` 和 `WixReservationDetailView`
+- [x] 视图中正确配置了 Wix API Key 和 Site ID
+- [x] `/wix/reservations/` 路由可访问
+- [x] `/wix/reservations/<id>/` 路由可访问
+- [x] API 文档已创建

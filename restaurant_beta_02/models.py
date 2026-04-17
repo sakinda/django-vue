@@ -205,3 +205,25 @@ class DataPrint(models.Model):
     print_id = models.CharField(verbose_name='打印编号', primary_key=True, max_length=32)
     print_type = models.IntegerField(verbose_name='打印类型') # 0:cuisine, 1:salle, 2:yellowT
     print_content = models.TextField(verbose_name='打印内容', max_length=65535)
+
+
+class DataKitchenCleaningTask(models.Model):
+    class Meta:
+        managed = True
+        db_table = 'data_kitchen_cleaning_task'
+        verbose_name = '厨房清洁任务'
+
+    def __str__(self):
+        return '任务ID：%s | 任务名：%s | 负责人：%s' % (self.task_id, self.task_name, self.task_manager)
+
+    task_id = models.AutoField(primary_key=True, verbose_name='任务ID')
+    task_name = models.CharField(max_length=100, verbose_name='任务名称')
+    task_manager = models.CharField(max_length=50, verbose_name='任务负责人')
+    task_duration = models.IntegerField(verbose_name='任务时长(分钟)', default=0)
+    task_frequency = models.IntegerField(verbose_name='任务频率(天)', default=1, help_text='1代表每天，7代表每周')
+    last_completed_time = models.CharField(max_length=32, verbose_name='最近完成时间', null=True, blank=True)
+    completion_history = models.TextField(verbose_name='完成历史', null=True, blank=True, help_text='记录最近30次完成时间')
+    task_description = models.TextField(verbose_name='任务描述', null=True, blank=True)
+    task_status = models.IntegerField(verbose_name='任务状态', default=0, choices=((0, '待完成'), (1, '已完成')))
+    area = models.CharField(max_length=50, verbose_name='区域', null=True, blank=True)
+

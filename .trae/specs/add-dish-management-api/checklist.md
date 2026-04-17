@@ -1,0 +1,5 @@
+- [x] `restaurant_beta_02/views.py` 中存在 `DataDishListView` 类
+- [x] `restaurant_beta_02/views.py` 中存在 `DataDishDetailView` 类
+- [x] `/dishlist/` 接口可访问
+- [x] `/dishdetail/<pk>/` 接口可访问
+- [x] API 文档文件已创建

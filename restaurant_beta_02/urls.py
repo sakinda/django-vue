@@ -37,6 +37,7 @@ urlpatterns = [
     url('^testalllivreur/$', views.TestAllLivreurView.as_view()),  # 获取所有送餐员
     url('^testemptydataticket/$', views.EmptyDataTicketView),  # 清空DataTicket表 - 用于删除所有订单
     url('^testemptydatatableticket/$', views.EmptyDataTableTicketView),  # 部分清空DataTicket表 - 用于删除所有未结账堂食订单
+    url('^testemptydataprint/$', views.EmptyDataPrintView),  # 清空DataPrintList表 - 用于删除所有打印队列
 
     url('^testAxios/$', views.TestAxiosTicketListView.as_view()),  # 测试后端发送携带cookie的请求，小程序调单用
     url('^testAxios2/$', views.TestAxiosTicketListView2),  # 测试后端发送携带cookie的请求(测试简化版)，小程序调单用
@@ -46,7 +47,8 @@ urlpatterns = [
     url('^testprintlist/$', views.TestPrintListView.as_view()),  # 获取打印队列 或者 新添加内容进打印队列
     url('^testprintlist/(?P<pk>.+)/$', views.TestPrintDetailListView.as_view()),  # 获取打印队列 或者 新添加内容进打印队列
 
-    url('^testbasenote/$', views.TestBaseNoteView.as_view()),  # DRF页面：获取base_note
+    url('^testbasenote/$', views.TestBaseNoteView.as_view()),  # DRF页面：获取/新增 base_note
+    url('^testbasenote/(?P<pk>\\d+)/$', views.DataNoteBaseDetailView.as_view()),  # 更改/删除单个备注
 
     url('^testpatch/(?P<pk>.+)/$', views.TestPatchView.as_view()),  # 测试put请求用
     url('^testpatchtable/(?P<pk>.+)/$', views.TestPatchTableView.as_view()),  # 测试put请求用
@@ -58,4 +60,14 @@ urlpatterns = [
     url('^orderlist/(?P<pk>\w+)$', views.OrderDetailView.as_view()),
     url('^tablelist/$', views.TableListView.as_view()),
     url('^tablelist/(?P<pk>\w+)$', views.TableDetailView.as_view()),
+    url('^kitchencleaningtasklist/$', views.DataKitchenCleaningTaskListView.as_view()),
+    url('^kitchencleaningtaskdetail/(?P<pk>.+)/$', views.DataKitchenCleaningTaskDetailView.as_view()),
+    url('^testdishlist/$', views.DataDishListView.as_view()),
+    url('^testdishdetail/(?P<dcode>.+)/$', views.DataDishDetailView.as_view()),
+    url('^testwixreservations/$', views.WixReservationListView.as_view()),
+    url('^testwixreservations/(?P<pk>.+)/$', views.WixReservationDetailView.as_view()),
+    url('^testwixonlineorders/$', views.WixOnlineOrdersView.as_view()),
+    url('^testwixonlineorders/(?P<mode>\d+)/$', views.WixOnlineOrdersView.as_view()),
+    url('^testwixautosyncswitch/$', views.TestWixAutoSyncSwitchView.as_view()),
+    url('^testuberin/$', views.TestUberInView.as_view()),
 ]

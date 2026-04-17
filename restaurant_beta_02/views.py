@@ -5,9 +5,12 @@ from django.shortcuts import render
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from decimal import Decimal
 
 import requests
 import json
+import re
+import os
 
 from .models import *
 from django.views import View
@@ -15,6 +18,8 @@ from rest_framework import serializers, status
 from rest_framework.generics import ListAPIView, GenericAPIView, UpdateAPIView, CreateAPIView, DestroyAPIView, \
     RetrieveAPIView
 from django.core.cache import cache
+from django.conf import settings
+from django.core.serializers.json import DjangoJSONEncoder
 
 tId = '1624561370'  # 关机后每15分钟更新一次
 phpId = '97gbuipcup949jc9png2t02nl7'  # 每周更新一次
@@ -549,7 +554,7 @@ class TestTicketView2(ListAPIView):
         return ticket_datail_order_groupby
 
 
-class TestBaseNoteView(ListAPIView):
+class TestBaseNoteView(ListAPIView, CreateAPIView):
     queryset = DataNoteBase.objects.all()
     serializer_class = TestBaseNoteSerializer
 
@@ -953,3 +958,907 @@ def EmptyDataTableTicketView(self):
     DataOrder.objects.filter(Q(tid__payment_status=0) & Q(tid__type=0)).delete()
     DataTicket.objects.filter(Q(payment_status=0) & Q(type=0)).delete()
     return HttpResponse('删除所有堂食数据')
+
+def EmptyDataPrintView(self):
+    DataPrint.objects.all().delete()
+    return HttpResponse('删除所有打印队列数据')
+
+
+class DataKitchenCleaningTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DataKitchenCleaningTask
+        fields = '__all__'
+
+
+class DataKitchenCleaningTaskListView(ListAPIView, CreateAPIView):
+    queryset = DataKitchenCleaningTask.objects.all()
+    serializer_class = DataKitchenCleaningTaskSerializer
+
+
+class DataKitchenCleaningTaskDetailView(RetrieveAPIView, UpdateAPIView, DestroyAPIView):
+    queryset = DataKitchenCleaningTask.objects.all()
+    serializer_class = DataKitchenCleaningTaskSerializer
+
+
+class DataDishListView(ListAPIView, CreateAPIView):
+    queryset = DataDish.objects.all()
+    serializer_class = DataDishSerializer
+
+
+class DataDishDetailView(RetrieveAPIView, UpdateAPIView, DestroyAPIView):
+    queryset = DataDish.objects.all()
+    serializer_class = DataDishSerializer
+    lookup_field = 'dcode'
+
+class DataNoteBaseDetailView(APIView):
+    def get(self, request, pk):
+        obj = DataNoteBase.objects.filter(id=pk).first()
+        if not obj:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(TestBaseNoteSerializer(obj).data)
+
+    def patch(self, request, pk):
+        obj = DataNoteBase.objects.filter(id=pk).first()
+        if not obj:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = TestBaseNoteSerializer(obj, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        obj = DataNoteBase.objects.filter(id=pk).first()
+        if not obj:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# Wix API Configuration
+WIX_API_KEY = 'IST.eyJraWQiOiJQb3pIX2FDMiIsImFsZyI6IlJTMjU2In0.eyJkYXRhIjoie1wiaWRcIjpcIjM1YzFlZTViLTIwZGItNGFmYS04MmEzLTgxNzkzZTQ1MTk4NlwiLFwiaWRlbnRpdHlcIjp7XCJ0eXBlXCI6XCJhcHBsaWNhdGlvblwiLFwiaWRcIjpcIjZjOGRiOGM1LTA4NjItNDQyYS1iNmY3LTk3MjcwNGIzM2FkZVwifSxcInRlbmFudFwiOntcInR5cGVcIjpcImFjY291bnRcIixcImlkXCI6XCI2MWRlMDZlMS05NzgwLTRjMDYtOTE3Yi1mNjE3OWQ3YzMxY2VcIn19IiwiaWF0IjoxNzczMTAxMzQ4fQ.Ucs_BJxlZPF22GHguycKqCWtCzM_BApT6aK_zE65CIo6ECXZzyoDYBdIiiJp3gGygCOVDB80NzaBKfCS3F3VZnb7J0SQhEtwXOGGmyxl3d2G_FIAi8rp0vAkOk-xmeqPPzU88byXq5bldpckHxEVOelkZqRFJbZrSII2uCnuD0KBT_1xLoRjcR5oCT-4kMcebKkh3ccOU-mQltvMVY3dChBIJinLg7Ns-pZ06WScgwr7DdIBm1aBi_1cpsR2X71jaemd12sqcN3OX5esz5EDJznHA5cPTkJ2133bSe_Y1SQS8Jg4ra9uGnFA6dyS4j5yWaP2bbsoHqtz8oQjmfFuPg'
+WIX_SITE_ID = 'cdf00b53-5571-49f9-8fa9-e9fb08f6515c'
+# Correct Base URL based on verification: https://www.wixapis.com/table-reservations/reservations/v1
+WIX_BASE_URL = 'https://www.wixapis.com/table-reservations/reservations/v1'
+WIX_RESERVATION_LOCATIONS_URL = 'https://www.wixapis.com/table-reservations/reservation-locations/v1/reservation-locations'
+WIX_ECOM_ORDERS_SEARCH_URL = 'https://www.wixapis.com/ecom/v1/orders/search'
+WIX_DEFAULT_LOCATION_ID = '38853019-1e11-47bb-af81-7f292682f271'
+
+
+class WixReservationListView(APIView):
+    def get(self, request):
+        # Wix Query endpoint requires POST
+        url = f"{WIX_BASE_URL}/reservations/query"
+        headers = {
+            "Authorization": WIX_API_KEY,
+            "wix-site-id": WIX_SITE_ID,
+            "Content-Type": "application/json"
+        }
+
+        # Calculate today's start date (UTC)
+        from django.utils import timezone
+        import datetime
+        import pytz
+        
+        # Get target date from query parameters or default to today (in Paris time)
+        target_date_str = request.query_params.get('date')
+        if target_date_str:
+            try:
+                target_date = datetime.datetime.strptime(target_date_str, '%Y-%m-%d').date()
+            except ValueError:
+                return Response({"error": "Invalid date format. Use YYYY-MM-DD."}, status=400)
+        else:
+            # Use Paris timezone for default date
+            paris_tz = pytz.timezone('Europe/Paris')
+            target_date = timezone.now().astimezone(paris_tz).date()
+        
+        # Construct time range for the target date (Paris Time -> UTC)
+        paris_tz = pytz.timezone('Europe/Paris')
+        
+        # Start of day in Paris
+        start_naive = datetime.datetime.combine(target_date, datetime.time.min)
+        start_paris = paris_tz.localize(start_naive)
+        start_utc = start_paris.astimezone(pytz.UTC)
+        
+        # End of day in Paris (Start of next day)
+        end_naive = datetime.datetime.combine(target_date + datetime.timedelta(days=1), datetime.time.min)
+        end_paris = paris_tz.localize(end_naive)
+        end_utc = end_paris.astimezone(pytz.UTC)
+        
+        start_of_day = start_utc.isoformat().replace('+00:00', 'Z')
+        end_of_day = end_utc.isoformat().replace('+00:00', 'Z')
+
+        limit = request.query_params.get('limit')
+        if limit is not None:
+            try:
+                parsed_limit = int(limit)
+            except ValueError:
+                return Response({"error": "Invalid limit. Must be an integer."}, status=400)
+            if parsed_limit <= 0:
+                return Response({"error": "Invalid limit. Must be a positive integer."}, status=400)
+            page_limit = min(parsed_limit, 100)
+        else:
+            page_limit = 100
+
+        query = {
+            "filter": {
+                "$and": [
+                    {"details.startDate": {"$gte": start_of_day}},
+                    {"details.startDate": {"$lt": end_of_day}}
+                ]
+            }
+        }
+
+        try:
+            cursor = None
+            all_reservations = []
+            seen_ids = set()
+            data = None
+            page_count = 0
+
+            while True:
+                page_count += 1
+                page_query = dict(query)
+                page_query["cursorPaging"] = {"limit": page_limit}
+                if cursor:
+                    page_query["cursorPaging"]["cursor"] = cursor
+
+                body = {
+                    "query": page_query,
+                    "fieldsets": ["FULL"]
+                }
+
+                response = requests.post(url, headers=headers, json=body)
+                if response.status_code == 404 and page_count == 1:
+                    try:
+                        error_detail = response.json()
+                        if "meta-site" in str(error_detail):
+                            return Response(
+                                {"error": "Wix Site ID not found or app not installed", "details": error_detail},
+                                status=404
+                            )
+                    except Exception:
+                        pass
+
+                response.raise_for_status()
+
+                page_data = response.json()
+                if data is None:
+                    data = page_data
+
+                for r in (page_data.get('reservations') or []):
+                    rid = r.get('id')
+                    if rid and rid in seen_ids:
+                        continue
+                    if rid:
+                        seen_ids.add(rid)
+                    all_reservations.append(r)
+
+                paging = page_data.get('pagingMetadata') or {}
+                cursor = ((paging.get('cursors') or {}).get('next'))
+                if not paging.get('hasNext') or not cursor:
+                    break
+                if page_count >= 30:
+                    break
+
+            data = data or {}
+            data['reservations'] = all_reservations
+            data['pagingMetadata'] = {"count": len(all_reservations), "hasNext": False, "cursors": {}}
+            data['reservations'].sort(key=lambda x: x.get('details', {}).get('startDate', ''))
+
+            if request.query_params.get('debugPaging') in ('1', 'true', 'True'):
+                data['pagingDebug'] = {
+                    'pageCount': page_count,
+                    'pageLimit': page_limit,
+                    'totalReservations': len(all_reservations)
+                }
+
+            locations_headers = {
+                "Authorization": WIX_API_KEY,
+                "wix-site-id": WIX_SITE_ID
+            }
+            try:
+                locations_response = requests.get(WIX_RESERVATION_LOCATIONS_URL, headers=locations_headers)
+                locations_response.raise_for_status()
+                data['reservationLocations'] = locations_response.json()
+            except requests.exceptions.RequestException as e:
+                status_code = 500
+                details = str(e)
+                if e.response is not None:
+                    status_code = e.response.status_code
+                    try:
+                        details = e.response.json()
+                    except:
+                        details = e.response.text
+                data['reservationLocationsError'] = {"status": status_code, "error": details}
+
+            return Response(data)
+        except requests.exceptions.RequestException as e:
+            status_code = 500
+            details = str(e)
+            if e.response is not None:
+                status_code = e.response.status_code
+                try:
+                    details = e.response.json()
+                except:
+                    details = e.response.text
+            return Response({"error": details}, status=status_code)
+
+    def post(self, request):
+        url = f"{WIX_BASE_URL}/reservations"
+        headers = {
+            "Authorization": WIX_API_KEY,
+            "wix-site-id": WIX_SITE_ID,
+            "Content-Type": "application/json"
+        }
+        required_fields = ["partySize", "startDate", "firstName", "phone"]
+        missing = [f for f in required_fields if f not in request.data]
+        location_id = request.data.get("reservationLocationId") or request.data.get("locationId") or WIX_DEFAULT_LOCATION_ID
+        if missing:
+            return Response({"error": "Missing required fields", "missing": missing}, status=400)
+        payload = {
+            "reservation": {
+                "details": {
+                    "partySize": request.data.get("partySize"),
+                    "startDate": request.data.get("startDate"),
+                    "reservationLocationId": location_id,
+                    "locationId": location_id
+                },
+                "reservee": {
+                    "firstName": request.data.get("firstName"),
+                    "lastName": request.data.get("lastName"),
+                    "email": request.data.get("email"),
+                    "phone": request.data.get("phone")
+                }
+            }
+        }
+        if request.data.get("endDate") is not None:
+            payload["reservation"]["details"]["endDate"] = request.data.get("endDate")
+        if request.data.get("teamMessage") is not None:
+            payload["reservation"]["teamMessage"] = request.data.get("teamMessage")
+        if request.data.get("status") is not None:
+            payload["reservation"]["status"] = request.data.get("status")
+        try:
+            response = requests.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+            return Response(response.json(), status=response.status_code)
+        except requests.exceptions.RequestException as e:
+            status_code = 500
+            details = str(e)
+            if e.response is not None:
+                status_code = e.response.status_code
+                try:
+                    details = e.response.json()
+                except:
+                    details = e.response.text
+            return Response({"error": details}, status=status_code)
+
+
+class TestUberInView(APIView):
+    def post(self, request):
+        payload = request.data
+        if payload is None or payload == '':
+            return Response({"error": "Empty body"}, status=400)
+
+        orders = payload if isinstance(payload, list) else [payload]
+        results = []
+        created_count = 0
+        skipped_count = 0
+
+        def parse_price(formatted):
+            s = str(formatted or '')
+            chars = []
+            for ch in s:
+                if ch.isdigit() or ch in ('.', ','):
+                    chars.append(ch)
+            num = ''.join(chars)
+            if not num:
+                return Decimal('0')
+            if num.count(',') == 1 and num.count('.') == 0:
+                num = num.replace(',', '.')
+            elif num.count(',') >= 1 and num.count('.') >= 1:
+                num = num.replace(',', '')
+            try:
+                return Decimal(num)
+            except Exception:
+                return Decimal('0')
+
+        import datetime
+        import random
+        from django.db import transaction
+        try:
+            from zoneinfo import ZoneInfo
+            paris_tz = ZoneInfo('Europe/Paris')
+        except Exception:
+            import pytz
+            paris_tz = pytz.timezone('Europe/Paris')
+
+        def enqueue_print(ticket_id, order_number_str, base_print_id):
+            try:
+                print_id = str(base_print_id)
+                try:
+                    n = int(print_id)
+                except Exception:
+                    n = int(datetime.datetime.now().timestamp() * 1000)
+                    print_id = str(n)
+
+                while DataPrint.objects.filter(print_id=print_id).exists():
+                    n += 1
+                    print_id = str(n)
+
+                ticket_obj = DataTicket.objects.get(ticket_id=ticket_id)
+                ticket_data = DataTicketSerializer(ticket_obj).data
+                DataPrint.objects.create(
+                    print_id=print_id,
+                    print_type=5,
+                    print_content=json.dumps(ticket_data, ensure_ascii=False, separators=(',', ':'), cls=DjangoJSONEncoder)
+                )
+            except Exception as e:
+                print(f"[UBER_IN] enqueue_print failed ticket={ticket_id} orderNumber={order_number_str}: {e}")
+
+        for o in orders:
+            if not isinstance(o, dict):
+                results.append({"status": "error", "error": "Invalid payload item. Must be an object."})
+                continue
+
+            order_number = o.get('orderNumber')
+            if order_number is None or str(order_number).strip() == '':
+                results.append({"status": "error", "error": "Missing orderNumber"})
+                continue
+
+            order_number_str = str(order_number)
+            if DataTicket.objects.filter(client_name__endswith=order_number_str).exists():
+                skipped_count += 1
+                results.append({"status": "skipped", "orderNumber": order_number_str, "reason": "duplicate"})
+                continue
+
+            customer_name = str(o.get('customerName') or '').strip()
+            client_name = f"{customer_name} - {order_number_str}" if customer_name else f"- {order_number_str}"
+
+            now_utc = datetime.datetime.now(datetime.timezone.utc)
+            ms = int(now_utc.timestamp() * 1000)
+            ticket_id = 'T' + str(ms)
+            while DataTicket.objects.filter(ticket_id=ticket_id).exists():
+                ms += 1
+                ticket_id = 'T' + str(ms)
+
+            pickup_dt = datetime.datetime.fromtimestamp(ms / 1000, paris_tz)
+            ticket_time = pickup_dt.strftime('%Y%m%d%H%M%S')
+            pickup_time_str = f"{pickup_dt.year}{pickup_dt.month:02d}{pickup_dt.day}{pickup_dt.hour:02d}{pickup_dt.minute:02d}{pickup_dt.second:02d}"
+
+            items = o.get('items') or []
+            if not isinstance(items, list):
+                items = []
+
+            with transaction.atomic():
+                if DataTicket.objects.filter(client_name__endswith=order_number_str).exists():
+                    skipped_count += 1
+                    results.append({"status": "skipped", "orderNumber": order_number_str, "reason": "duplicate"})
+                    continue
+
+                next_delivery_n = DataTicket.objects.filter(type=2).count() + 1
+                table_num = f"L{next_delivery_n}"
+
+                ticket_price = parse_price(o.get('totalPrice'))
+                ticket = DataTicket.objects.create(
+                    ticket_id=ticket_id,
+                    ticket_time=ticket_time,
+                    ticket_pickup_time=pickup_time_str,
+                    delivery_time=str(ms),
+                    type=2,
+                    table_num=table_num,
+                    client_name=client_name,
+                    delivery_platform_id=3,
+                    ticket_price=ticket_price,
+                )
+
+                db_total = Decimal('0')
+
+                for it in items:
+                    if not isinstance(it, dict):
+                        continue
+                    code = str(it.get('code') or '').strip()
+                    if not code:
+                        continue
+
+                    qty = it.get('quantity') or 1
+                    try:
+                        qty = int(qty)
+                    except Exception:
+                        qty = 1
+
+                    dish_price = DataDish.objects.filter(dcode=code).values_list('dprice', flat=True).first()
+                    if dish_price is None:
+                        continue
+
+                    db_total += (dish_price or Decimal('0')) * qty
+
+                    now2 = datetime.datetime.now()
+                    ms2 = int(now2.timestamp() * 1000)
+                    order_id = 'D' + str(ms2) + str(random.randint(100, 999))
+                    order_time = now2.strftime('%Y%m%d%H%M%S')
+
+                    DataOrder.objects.create(
+                        order_id=order_id,
+                        order_time=order_time,
+                        code_id=code,
+                        quantity=qty,
+                        o_note='无备注',
+                        tid=ticket,
+                    )
+
+                ticket.ticket_reduction = db_total - ticket_price
+                ticket.save(update_fields=['ticket_reduction'])
+
+                base_print_id = str(ms)
+                transaction.on_commit(
+                    lambda tid=ticket.ticket_id, on=order_number_str, bp=base_print_id: enqueue_print(tid, on, bp)
+                )
+
+            created_count += 1
+            results.append({
+                "status": "created",
+                "orderNumber": order_number_str,
+                "ticket_id": ticket_id,
+                "table_num": table_num,
+            })
+
+        status_code = 201 if created_count else 200
+        return Response({
+            "created": created_count,
+            "skipped": skipped_count,
+            "results": results
+        }, status=status_code)
+
+
+class TestWixAutoSyncSwitchView(APIView):
+    def _flag_path(self):
+        return getattr(
+            settings,
+            'WIX_APSCHEDULER_FLAG_FILE',
+            '/tmp/restaurant_beta_02_wix_sync.enabled'
+        )
+
+    def _read(self):
+        default_enabled = bool(getattr(settings, 'WIX_APSCHEDULER_ENABLED', True))
+        path = self._flag_path()
+        if not os.path.exists(path):
+            return default_enabled, 'settings'
+        try:
+            raw = (open(path).read() or '').strip().lower()
+        except Exception:
+            return default_enabled, 'settings'
+        if raw in ('1', 'true', 'on', 'yes'):
+            return True, 'file'
+        if raw in ('0', 'false', 'off', 'no'):
+            return False, 'file'
+        return default_enabled, 'settings'
+
+    def get(self, request):
+        enabled, source = self._read()
+        return Response({
+            'enabled': enabled,
+            'source': source,
+            'flagFile': self._flag_path()
+        })
+
+    def post(self, request):
+        enabled_val = None
+        if isinstance(request.data, dict):
+            enabled_val = request.data.get('enabled')
+        if enabled_val is None:
+            enabled_val = request.query_params.get('enabled')
+
+        enabled = None
+        if isinstance(enabled_val, bool):
+            enabled = enabled_val
+        elif isinstance(enabled_val, int):
+            enabled = bool(enabled_val)
+        elif enabled_val is not None:
+            s = str(enabled_val).strip().lower()
+            if s in ('1', 'true', 'on', 'yes'):
+                enabled = True
+            elif s in ('0', 'false', 'off', 'no'):
+                enabled = False
+
+        if enabled is None:
+            return Response(
+                {'error': 'enabled must be true/false or 1/0'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        path = self._flag_path()
+        try:
+            open(path, 'w').write('1' if enabled else '0')
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        print(f"[WIX_SYNC] api set enabled={enabled} flagFile={path}")
+        return Response({
+            'enabled': enabled,
+            'source': 'file',
+            'flagFile': path
+        })
+
+    def patch(self, request):
+        return self.post(request)
+
+
+class WixReservationDetailView(APIView):
+    def get(self, request, pk):
+        url = f"{WIX_BASE_URL}/reservations/{pk}?fieldsets=FULL"
+        headers = {
+            "Authorization": WIX_API_KEY,
+            "wix-site-id": WIX_SITE_ID
+        }
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            return Response(response.json())
+        except requests.exceptions.RequestException as e:
+            status_code = 500
+            details = str(e)
+            if e.response is not None:
+                status_code = e.response.status_code
+                try:
+                    details = e.response.json()
+                except:
+                    details = e.response.text
+            return Response({"error": details}, status=status_code)
+
+    def patch(self, request, pk):
+        url = f"{WIX_BASE_URL}/reservations/{pk}"
+        headers = {
+            "Authorization": WIX_API_KEY,
+            "wix-site-id": WIX_SITE_ID,
+            "Content-Type": "application/json"
+        }
+        try:
+            get_resp = requests.get(url, headers=headers)
+            get_resp.raise_for_status()
+            current = get_resp.json()
+            reservation_data = current.get('reservation', current)
+            current_revision = reservation_data.get('revision')
+        except Exception as e:
+            return Response({"error": f"Failed to fetch current revision: {str(e)}"}, status=500)
+
+        update_payload = {"reservation": {"revision": current_revision, "details": {}, "reservee": {}}}
+
+        if 'partySize' in request.data:
+            update_payload['reservation']['details']['partySize'] = request.data['partySize']
+        if 'startDate' in request.data:
+            update_payload['reservation']['details']['startDate'] = request.data['startDate']
+        if 'endDate' in request.data:
+            update_payload['reservation']['details']['endDate'] = request.data['endDate']
+
+        table_ids = None
+        if 'tableIds' in request.data:
+            table_ids = request.data['tableIds']
+        elif 'tablesIds' in request.data:
+            table_ids = request.data['tablesIds']
+        elif 'tables' in request.data and isinstance(request.data['tables'], dict) and 'ids' in request.data['tables']:
+            table_ids = request.data['tables']['ids']
+        if table_ids is not None:
+            if isinstance(table_ids, str):
+                table_ids = [table_ids]
+            update_payload['reservation']['details']['tableIds'] = table_ids
+            update_payload['reservation']['details']['tables'] = {"ids": table_ids}
+
+        if 'firstName' in request.data:
+            update_payload['reservation']['reservee']['firstName'] = request.data['firstName']
+        if 'lastName' in request.data:
+            update_payload['reservation']['reservee']['lastName'] = request.data['lastName']
+        if 'email' in request.data:
+            update_payload['reservation']['reservee']['email'] = request.data['email']
+        if 'phone' in request.data:
+            update_payload['reservation']['reservee']['phone'] = request.data['phone']
+
+        if 'teamMessage' in request.data:
+            update_payload['reservation']['teamMessage'] = request.data['teamMessage']
+        if 'status' in request.data:
+            update_payload['reservation']['status'] = request.data['status']
+
+        if not update_payload['reservation']['details']:
+            del update_payload['reservation']['details']
+        if not update_payload['reservation']['reservee']:
+            del update_payload['reservation']['reservee']
+
+        try:
+            resp = requests.patch(url, headers=headers, json=update_payload)
+            resp.raise_for_status()
+            return Response(resp.json())
+        except requests.exceptions.RequestException as e:
+            status_code = 500
+            details = str(e)
+            if e.response is not None:
+                status_code = e.response.status_code
+                try:
+                    details = e.response.json()
+                except:
+                    details = e.response.text
+            return Response({"error": details}, status=status_code)
+
+
+
+class WixOnlineOrdersView(APIView):
+    def get(self, request, mode=None):
+        url = WIX_ECOM_ORDERS_SEARCH_URL
+        api_key = getattr(settings, 'WIX_API_KEY', None) or WIX_API_KEY
+        site_id = getattr(settings, 'WIX_SITE_ID', None) or WIX_SITE_ID
+        headers = {
+            "Authorization": api_key,
+            "wix-site-id": site_id,
+            "Content-Type": "application/json"
+        }
+
+        body = {
+            "sort": [{"fieldName": "createdDate", "order": "DESC"}],
+            "cursorPaging": {}
+        }
+
+        limit = request.query_params.get('limit')
+        cursor = request.query_params.get('cursor')
+
+        if limit is not None:
+            try:
+                parsed_limit = int(limit)
+            except ValueError:
+                return Response({"error": "Invalid limit. Must be an integer."}, status=400)
+            if parsed_limit <= 0:
+                return Response({"error": "Invalid limit. Must be a positive integer."}, status=400)
+            body['cursorPaging']['limit'] = min(parsed_limit, 100)
+        else:
+            body['cursorPaging']['limit'] = 100
+
+        if cursor:
+            body['cursorPaging']['cursor'] = cursor
+
+        try:
+            debug_mode = request.query_params.get('debug') in ('1', 'true', 'True')
+            target_limit = (body.get('cursorPaging') or {}).get('limit') or 100
+
+            date_filter = request.query_params.get('date') if str(mode) == '1' else None
+
+            kind_param = request.query_params.get('kind')
+            if kind_param is None:
+                kind_param = 'order'
+
+            def extract_code(text):
+                if not text:
+                    return ''
+                match = re.search(r'\[([^\[\]]+)\]', str(text))
+                return match.group(1).strip() if match else ''
+
+            response = requests.post(url, headers=headers, json={"search": body})
+            response.raise_for_status()
+
+            raw = response.json()
+            orders = raw.get('orders') or []
+
+            if debug_mode:
+                raw_orders = []
+                for o in orders:
+                    channel_type = ((o.get('channelInfo') or {}).get('type'))
+                    billing_contact = ((o.get('billingInfo') or {}).get('contactDetails') or {})
+                    recipient_contact = ((o.get('recipientInfo') or {}).get('contactDetails') or {})
+                    line_items = o.get('lineItems') or []
+                    line_item_names = []
+                    line_item_details = []
+                    for li in line_items:
+                        pn = li.get('productName')
+                        if isinstance(pn, dict):
+                            name = pn.get('original') or pn.get('translated')
+                        else:
+                            name = pn
+                        if name:
+                            line_item_names.append(name)
+
+                        modifier_labels = []
+                        seen_modifier_labels = set()
+                        modifier_groups = li.get('modifierGroups') or []
+                        for mg in modifier_groups:
+                            modifiers = (mg or {}).get('modifiers') or []
+                            for m in modifiers:
+                                label = (m or {}).get('label')
+                                if isinstance(label, dict):
+                                    label_name = label.get('original') or label.get('translated')
+                                else:
+                                    label_name = label
+                                if label_name and label_name not in seen_modifier_labels:
+                                    seen_modifier_labels.add(label_name)
+                                    modifier_labels.append(label_name)
+
+                        description_lines = []
+                        seen_description_lines = set()
+                        for dl in (li.get('descriptionLines') or []):
+                            text_val = None
+                            if isinstance(dl, dict):
+                                text_val = dl.get('plainText') or dl.get('text') or dl.get('value') or dl.get('line')
+                            else:
+                                text_val = dl
+
+                            if isinstance(text_val, dict):
+                                text = text_val.get('original') or text_val.get('translated')
+                            else:
+                                text = text_val
+
+                            if text is not None:
+                                text = str(text).strip()
+                            if text and text not in seen_description_lines:
+                                seen_description_lines.add(text)
+                                description_lines.append(text)
+
+                        line_item_details.append({
+                            'name': name,
+                            'quantity': li.get('quantity') or 1,
+                            'code': extract_code(name) or '',
+                            'modifierLabels': modifier_labels,
+                            'descriptionLines': description_lines
+                        })
+
+                    normalized_line_item_names = [str(n).strip().casefold() for n in line_item_names]
+                    is_reservation = any(
+                        n in ('réservation', 'reservation', '订位', '预订', '預訂')
+                        for n in normalized_line_item_names
+                    )
+                    kind = 'reserve' if is_reservation else 'order'
+
+                    if date_filter:
+                        created_date_str = str(o.get('createdDate') or '')
+                        if not created_date_str.startswith(date_filter):
+                            continue
+
+                    raw_orders.append({
+                        'id': o.get('id'),
+                        'orderNumber': o.get('number'),
+                        'createdDate': o.get('createdDate'),
+                        'status': o.get('status'),
+                        'paymentStatus': o.get('paymentStatus'),
+                        'fulfillmentStatus': o.get('fulfillmentStatus'),
+                        'channelType': channel_type,
+                        'kind': kind,
+                        'hasShippingInfo': 'shippingInfo' in o,
+                        'hasRecipientInfo': 'recipientInfo' in o,
+                        'billingName': ((billing_contact.get('firstName') or '') + ' ' + (billing_contact.get('lastName') or '')).strip(),
+                        'recipientName': ((recipient_contact.get('firstName') or '') + ' ' + (recipient_contact.get('lastName') or '')).strip(),
+                        'lineItemNames': line_item_names[:5],
+                        'lineItems': line_item_details[:10],
+                        'keyHints': [k for k in o.keys() if any(x in k.lower() for x in ('ship', 'deliver', 'pickup', 'fulfill', 'method'))]
+                    })
+
+                return Response({
+                    'rawTotal': len(orders),
+                    'rawHasShippingInfoCount': sum(1 for r in raw_orders if r.get('hasShippingInfo')),
+                    'rawOrders': raw_orders[:target_limit]
+                })
+
+            cleaned = []
+            for o in orders:
+                if date_filter:
+                    cds = str(o.get('createdDate') or '')
+                    if not cds.startswith(date_filter):
+                        continue
+                line_items = o.get('lineItems') or []
+                line_item_names = []
+                for li in line_items:
+                    pn = li.get('productName')
+                    if isinstance(pn, dict):
+                        name = pn.get('original') or pn.get('translated')
+                    else:
+                        name = pn
+                    if name:
+                        line_item_names.append(name)
+
+                normalized_line_item_names = [str(n).strip().casefold() for n in line_item_names]
+                is_reservation = any(
+                    n in ('réservation', 'reservation', '订位', '预订', '預訂')
+                    for n in normalized_line_item_names
+                )
+                kind = 'reserve' if is_reservation else 'order'
+
+                if kind_param in ('order', 'reserve') and kind != kind_param:
+                    continue
+
+                shipping_info = o.get('shippingInfo')
+                shipping_method = shipping_info.get('title') if isinstance(shipping_info, dict) else None
+
+                contact = (o.get('billingInfo') or {}).get('contactDetails') or {}
+                first_name = contact.get('firstName') or ''
+                last_name = contact.get('lastName') or ''
+                customer_name = (first_name + ' ' + last_name).strip()
+
+                items = []
+                for li in line_items:
+                    product_name = li.get('productName')
+                    if isinstance(product_name, dict):
+                        name = product_name.get('original') or product_name.get('translated')
+                    else:
+                        name = product_name
+
+                    modifier_labels = []
+                    seen_modifier_labels = set()
+                    modifier_groups = li.get('modifierGroups') or []
+                    for mg in modifier_groups:
+                        modifiers = (mg or {}).get('modifiers') or []
+                        for m in modifiers:
+                            label = (m or {}).get('label')
+                            if isinstance(label, dict):
+                                label_name = label.get('original') or label.get('translated')
+                            else:
+                                label_name = label
+                            if label_name and label_name not in seen_modifier_labels:
+                                seen_modifier_labels.add(label_name)
+                                modifier_labels.append(label_name)
+
+                    description_lines = []
+                    seen_description_lines = set()
+                    for dl in (li.get('descriptionLines') or []):
+                        text_val = None
+                        if isinstance(dl, dict):
+                            text_val = dl.get('plainText') or dl.get('text') or dl.get('value') or dl.get('line')
+                        else:
+                            text_val = dl
+
+                        if isinstance(text_val, dict):
+                            text = text_val.get('original') or text_val.get('translated')
+                        else:
+                            text = text_val
+
+                        if text is not None:
+                            text = str(text).strip()
+                        if text and text not in seen_description_lines:
+                            seen_description_lines.add(text)
+                            description_lines.append(text)
+
+                    quantity = li.get('quantity') or 1
+                    code = extract_code(name) or ''
+                    if code:
+                        items.append({
+                            'name': name,
+                            'quantity': quantity,
+                            'code': code
+                        })
+                    else:
+                        expanded = []
+                        for entry in (modifier_labels or []) + (description_lines or []):
+                            expanded.append({
+                                'name': entry,
+                                'quantity': 1,
+                                'code': extract_code(entry) or ''
+                            })
+                        if expanded:
+                            items.extend(expanded)
+                        else:
+                            items.append({
+                                'name': name,
+                                'quantity': quantity,
+                                'code': ''
+                            })
+
+                cleaned.append({
+                    'id': o.get('id'),
+                    'orderNumber': o.get('number'),
+                    'createdDate': o.get('createdDate'),
+                    'customerName': customer_name,
+                    'totalPrice': ((o.get('priceSummary') or {}).get('total') or {}).get('formattedAmount'),
+                    'paymentStatus': o.get('paymentStatus'),
+                    'paidAmount': ((o.get('balanceSummary') or {}).get('paid') or {}).get('amount'),
+                    'balanceAmount': ((o.get('balanceSummary') or {}).get('balance') or {}).get('amount'),
+                    'shippingMethod': shipping_method,
+                    'items': items
+                })
+
+            return Response({
+                'orders': cleaned,
+                'total': len(cleaned)
+            })
+        except requests.exceptions.RequestException as e:
+            status_code = 500
+            details = str(e)
+            if e.response is not None:
+                status_code = e.response.status_code
+                try:
+                    details = e.response.json()
+                except:
+                    details = e.response.text
+            return Response({"error": details}, status=status_code)
+

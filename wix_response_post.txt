@@ -1,0 +1,77 @@
+Note: Unnecessary use of -X or --request, POST is already inferred.
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Host www.wixapis.com:443 was resolved.
+* IPv6: (none)
+* IPv4: 34.149.206.255
+*   Trying 34.149.206.255:443...
+* Connected to www.wixapis.com (34.149.206.255) port 443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+} [320 bytes data]
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (IN), TLS handshake, Server hello (2):
+{ [122 bytes data]
+* (304) (IN), TLS handshake, Unknown (8):
+{ [19 bytes data]
+* (304) (IN), TLS handshake, Certificate (11):
+{ [2595 bytes data]
+* (304) (IN), TLS handshake, CERT verify (15):
+{ [264 bytes data]
+* (304) (IN), TLS handshake, Finished (20):
+{ [36 bytes data]
+* (304) (OUT), TLS handshake, Finished (20):
+} [36 bytes data]
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=*.wixapis.com
+*  start date: Feb 24 11:26:23 2026 GMT
+*  expire date: May 25 11:26:22 2026 GMT
+*  subjectAltName: host "www.wixapis.com" matched cert's "*.wixapis.com"
+*  issuer: C=US; O=Let's Encrypt; CN=R12
+*  SSL certificate verify ok.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://www.wixapis.com/table-reservations/reservations/v1/reservations/query
+* [HTTP/2] [1] [:method: POST]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: www.wixapis.com]
+* [HTTP/2] [1] [:path: /table-reservations/reservations/v1/reservations/query]
+* [HTTP/2] [1] [user-agent: curl/8.7.1]
+* [HTTP/2] [1] [accept: */*]
+* [HTTP/2] [1] [authorization: IST.eyJraWQiOiJQb3pIX2FDMiIsImFsZyI6IlJTMjU2In0.eyJkYXRhIjoie1wiaWRcIjpcIjM1YzFlZTViLTIwZGItNGFmYS04MmEzLTgxNzkzZTQ1MTk4NlwiLFwiaWRlbnRpdHlcIjp7XCJ0eXBlXCI6XCJhcHBsaWNhdGlvblwiLFwiaWRcIjpcIjZjOGRiOGM1LTA4NjItNDQyYS1iNmY3LTk3MjcwNGIzM2FkZVwifSxcInRlbmFudFwiOntcInR5cGVcIjpcImFjY291bnRcIixcImlkXCI6XCI2MWRlMDZlMS05NzgwLTRjMDYtOTE3Yi1mNjE3OWQ3YzMxY2VcIn19IiwiaWF0IjoxNzczMTAxMzQ4fQ.Ucs_BJxlZPF22GHguycKqCWtCzM_BApT6aK_zE65CIo6ECXZzyoDYBdIiiJp3gGygCOVDB80NzaBKfCS3F3VZnb7J0SQhEtwXOGGmyxl3d2G_FIAi8rp0vAkOk-xmeqPPzU88byXq5bldpckHxEVOelkZqRFJbZrSII2uCnuD0KBT_1xLoRjcR5oCT-4kMcebKkh3ccOU-mQltvMVY3dChBIJinLg7Ns-pZ06WScgwr7DdIBm1aBi_1cpsR2X71jaemd12sqcN3OX5esz5EDJznHA5cPTkJ2133bSe_Y1SQS8Jg4ra9uGnFA6dyS4j5yWaP2bbsoHqtz8oQjmfFuPg]
+* [HTTP/2] [1] [wix-site-id: 61de06e1-9780-4c06-917b-f6179d7c31ce]
+* [HTTP/2] [1] [content-type: application/json]
+* [HTTP/2] [1] [content-length: 2]
+> POST /table-reservations/reservations/v1/reservations/query HTTP/2
+> Host: www.wixapis.com
+> User-Agent: curl/8.7.1
+> Accept: */*
+> Authorization: IST.eyJraWQiOiJQb3pIX2FDMiIsImFsZyI6IlJTMjU2In0.eyJkYXRhIjoie1wiaWRcIjpcIjM1YzFlZTViLTIwZGItNGFmYS04MmEzLTgxNzkzZTQ1MTk4NlwiLFwiaWRlbnRpdHlcIjp7XCJ0eXBlXCI6XCJhcHBsaWNhdGlvblwiLFwiaWRcIjpcIjZjOGRiOGM1LTA4NjItNDQyYS1iNmY3LTk3MjcwNGIzM2FkZVwifSxcInRlbmFudFwiOntcInR5cGVcIjpcImFjY291bnRcIixcImlkXCI6XCI2MWRlMDZlMS05NzgwLTRjMDYtOTE3Yi1mNjE3OWQ3YzMxY2VcIn19IiwiaWF0IjoxNzczMTAxMzQ4fQ.Ucs_BJxlZPF22GHguycKqCWtCzM_BApT6aK_zE65CIo6ECXZzyoDYBdIiiJp3gGygCOVDB80NzaBKfCS3F3VZnb7J0SQhEtwXOGGmyxl3d2G_FIAi8rp0vAkOk-xmeqPPzU88byXq5bldpckHxEVOelkZqRFJbZrSII2uCnuD0KBT_1xLoRjcR5oCT-4kMcebKkh3ccOU-mQltvMVY3dChBIJinLg7Ns-pZ06WScgwr7DdIBm1aBi_1cpsR2X71jaemd12sqcN3OX5esz5EDJznHA5cPTkJ2133bSe_Y1SQS8Jg4ra9uGnFA6dyS4j5yWaP2bbsoHqtz8oQjmfFuPg
+> wix-site-id: 61de06e1-9780-4c06-917b-f6179d7c31ce
+> Content-Type: application/json
+> Content-Length: 2
+> 
+} [2 bytes data]
+* upload completely sent off: 2 bytes
+< HTTP/2 400 
+< date: Tue, 10 Mar 2026 00:33:14 GMT
+< content-type: application/json
+< content-length: 173
+< x-wix-responded-by: wix.table_reservations.v1.reservation:QueryReservations:com.wixpress.table-reservations.reservations
+< x-seen-by: yI4PPEXc3bvXNWfpzSkUarxkNjrXdwdgtu6E0yACibU=,Ua1iSBCTq7qSXjmRCGE1N24+v6yL+UVji/VaAV0L1+ItKIgX6ladVAJci4liBUDNFZOMAIxHS/QIMuqQZO1XRQ==,rXUceJIlvIg2Ftogbhjv0AEAORIr5NpIwlIlnL855/REQfi00LSS7LJu7sdkoLsDAhHCTz4xgddSvX0GgqHyfg==,r6yY0ta7bIKrqK70x072lWhmal/JXoKQbvrKV+TI6BA=
+< x-wix-request-id: 1773102794.3629186188721320
+< access-control-expose-headers: x-wix-request-id, x-wix-consistent
+< set-cookie: XSRF-TOKEN=1773102794|9hEj9eBNGals; Path=/; Domain=www.wixapis.com; Secure; SameSite=None
+< x-robots-tag: noindex
+< server: Pepyaka
+< x-content-type-options: nosniff
+< via: 1.1 google
+< glb-x-seen-by: wMMTADooq5AJ3cFomJ/MuXOQWGce7NCZXKms1ErOpBs=
+< alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+< 
+{ [173 bytes data]
+100   175  100   173  100     2    703      8 --:--:-- --:--:-- --:--:--   714
+* Connection #0 to host www.wixapis.com left intact
+{"message":"query must not be empty","details":{"validationError":{"fieldViolations":[{"field":"query","description":"must not be empty","violatedRule":"REQUIRED_FIELD"}]}}}

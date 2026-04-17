@@ -14,6 +14,10 @@ from pathlib import Path
 import pymysql
 from django.template import base
 
+# 1. 伪造版本号 (必须写在 install_as_MySQLdb 之前)
+# 这里我们假装自己是 1.4.6 版本，足以骗过 Django 3.1 的检查
+pymysql.version_info = (1, 4, 6, 'final', 0)
+
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,6 +34,8 @@ SECRET_KEY = '2c)86opelk0t5n8j_bvv4=ukb=1k$+d&^=c03^p8u&38iqu3zr'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+
+WIX_APSCHEDULER_ENABLED = True
 
 
 # Application definition
