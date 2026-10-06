@@ -60,6 +60,7 @@ class DataTicketSerializer(serializers.ModelSerializer):
             'code': o.code.dcode,
             'code__dname': o.code.dname,
             'code__dfrname': o.code.dfrname,
+            'code__dmininame': o.code.dmininame,
             'code__dprice': o.code.dprice,
             'code__dcategory': o.code.dcategory,
             'code__dsubcategory': o.code.dsubcategory_id,
@@ -88,6 +89,7 @@ class DataTicketSerializer(serializers.ModelSerializer):
             'code': o.code.dcode,
             'code__dname': o.code.dname,
             'code__dfrname': o.code.dfrname,
+            'code__dmininame': o.code.dmininame,
             'code__dprice': o.code.dprice,
             'code__dcategory': o.code.dcategory,
             'code__dsubcategory': o.code.dsubcategory_id,
@@ -118,6 +120,7 @@ class DataTicketSerializer(serializers.ModelSerializer):
             'code': o.code.dcode,
             'code__dname': o.code.dname,
             'code__dfrname': o.code.dfrname,
+            'code__dmininame': o.code.dmininame,
             'code__dprice': o.code.dprice,
             'code__dcategory': o.code.dcategory,
             'code__dsubcategory': o.code.dsubcategory_id,
@@ -143,6 +146,7 @@ class DataTicketSerializer(serializers.ModelSerializer):
             'code': k,
             'code__dname': v.code.dname,
             'code__dfrname': v.code.dfrname,
+            'code__dmininame': v.code.dmininame,
             'code__dprice': v.code.dprice,
             'code__dcategory': v.code.dcategory,
             'code__dsubcategory': v.code.dsubcategory_id,
@@ -202,6 +206,7 @@ class DataDishSerializer(serializers.ModelSerializer):
 class TestOrderSerializer(serializers.ModelSerializer):
     dname = serializers.CharField(source='code.dname')
     dfrdname = serializers.CharField(source='code.dfrname')
+    dmininame = serializers.CharField(source='code.dmininame')
     dprice = serializers.CharField(source='code.dprice')
     dingredients = serializers.CharField(source='code.dingredients')
     dcategory = serializers.CharField(source='code.dcategory')  # 2023-02添加，为了给Cuisine单排序
@@ -220,11 +225,11 @@ class TestOrderSerializer(serializers.ModelSerializer):
         model = DataOrder
         # fields = ['order_id', 'prepare_status', 'quantity', 'finish_time', 'dname', 'table_num', 'ticket_note', 'ticket_emergency',
         #           'note']
-        fields = ['order_id', 'prepare_status', 'quantity', 'finish_time', 'dname','dfrdname', 'dprice', 'table_num',
+        fields = ['order_id', 'prepare_status', 'quantity', 'finish_time', 'dname', 'dfrdname', 'dmininame', 'dprice', 'table_num',
                   'ticket_note',
                   'ticket_emergency', 'note', 'ticket_personquantity', 'dingredients', 'dcategory', 'dsubcategory',
                   'ticket_price', 'ticket_platform', 'ticket_payment_status']
-        read_only_fields = ['prepare_status', 'finish_time', 'dname', 'dfrdname', 'dprice', 'ticket_note', 'table_num',
+        read_only_fields = ['prepare_status', 'finish_time', 'dname', 'dfrdname', 'dmininame', 'dprice', 'ticket_note', 'table_num',
                             'ticket_emergency', 'note', 'ticket_price', 'ticket_platform', 'ticket_payment_status']
 
 
@@ -815,11 +820,12 @@ class TestDishGroupby2View(APIView):
         agg = qs.annotate(
             did=F('code__did'),
             dname=F('code__dname'),
+            dmininame=F('code__dmininame'),
             dcode=F('code'),
             dcategory=F('code__dcategory'),
             dsubcategory=F('code__dsubcategory_id'),
             dingredients=F('code__dingredients'),
-        ).values('did', 'dname', 'dcode', 'dcategory', 'dsubcategory', 'dingredients')\
+        ).values('did', 'dname', 'dmininame', 'dcode', 'dcategory', 'dsubcategory', 'dingredients')\
          .annotate(total_quantity=Sum('quantity')).order_by('dsubcategory', 'dcode')
         start = (page - 1) * size
         end = start + size
@@ -887,11 +893,12 @@ class TestDishGroupby3View(APIView):
         agg = qs.annotate(
             did=F('code__did'),
             dname=F('code__dname'),
+            dmininame=F('code__dmininame'),
             dcode=F('code'),
             dcategory=F('code__dcategory'),
             dsubcategory=F('code__dsubcategory_id'),
             dingredients=F('code__dingredients'),
-        ).values('did', 'dname', 'dcode', 'dcategory', 'dsubcategory', 'dingredients') \
+        ).values('did', 'dname', 'dmininame', 'dcode', 'dcategory', 'dsubcategory', 'dingredients') \
          .annotate(total_quantity=Sum('quantity')).order_by('dsubcategory', 'dcode')
         start = (page - 1) * size
         end = start + size
@@ -1022,6 +1029,58 @@ WIX_BASE_URL = 'https://www.wixapis.com/table-reservations/reservations/v1'
 WIX_RESERVATION_LOCATIONS_URL = 'https://www.wixapis.com/table-reservations/reservation-locations/v1/reservation-locations'
 WIX_ECOM_ORDERS_SEARCH_URL = 'https://www.wixapis.com/ecom/v1/orders/search'
 WIX_DEFAULT_LOCATION_ID = '38853019-1e11-47bb-af81-7f292682f271'
+
+WIX_VALID_RESERVATION_STATUSES = {
+    'UNKNOWN',
+    'HELD',
+    'RESERVED',
+    'CANCELED',
+    'FINISHED',
+    'NO_SHOW',
+    'SEATED',
+    'REQUESTED',
+    'DECLINED',
+    'PAYMENT_PENDING',
+    'PAYMENT_INFORMATION_PENDING',
+}
+
+
+def normalize_wix_reservation_status(raw_status, default=None):
+    """
+    Convert user-facing or upstream reservation statuses into Wix-supported enums.
+    """
+    if raw_status is None:
+        return default
+
+    normalized = str(raw_status).strip()
+    if not normalized:
+        return default
+
+    upper_value = normalized.upper().replace('-', '_').replace(' ', '_')
+    alias_map = {
+        'CONFIRMED': 'RESERVED',
+        'BOOKED': 'RESERVED',
+        'RECORDED': 'RESERVED',
+        'ARRIVED': 'SEATED',
+        'SEATED': 'SEATED',
+        'CANCELLED': 'CANCELED',
+        'CANCELED': 'CANCELED',
+        'CANCLED': 'CANCELED',
+        'NO_SHOW': 'NO_SHOW',
+        'NOSHOW': 'NO_SHOW',
+        'DECLINED': 'DECLINED',
+        'REQUESTED': 'REQUESTED',
+        'HELD': 'HELD',
+        'FINISHED': 'FINISHED',
+        'COMPLETED': 'FINISHED',
+        'PAYMENT_PENDING': 'PAYMENT_PENDING',
+        'PAYMENT_INFORMATION_PENDING': 'PAYMENT_INFORMATION_PENDING',
+    }
+
+    mapped = alias_map.get(upper_value, upper_value)
+    if mapped in WIX_VALID_RESERVATION_STATUSES:
+        return mapped
+    return default
 
 
 class WixReservationListView(APIView):
@@ -1216,7 +1275,17 @@ class WixReservationListView(APIView):
         if request.data.get("teamMessage") is not None:
             payload["reservation"]["teamMessage"] = request.data.get("teamMessage")
         if request.data.get("status") is not None:
-            payload["reservation"]["status"] = request.data.get("status")
+            normalized_status = normalize_wix_reservation_status(request.data.get("status"))
+            if normalized_status is None:
+                return Response(
+                    {
+                        "error": "Invalid reservation status",
+                        "received": request.data.get("status"),
+                        "allowed": sorted(WIX_VALID_RESERVATION_STATUSES),
+                    },
+                    status=400
+                )
+            payload["reservation"]["status"] = normalized_status
         try:
             response = requests.post(url, headers=headers, json=payload)
             response.raise_for_status()
@@ -1231,6 +1300,622 @@ class WixReservationListView(APIView):
                 except:
                     details = e.response.text
             return Response({"error": details}, status=status_code)
+
+
+class TestTheForkSyncView(APIView):
+    def post(self, request):
+        import datetime
+        import re
+        import requests as wix_requests
+        from django.utils import timezone as dj_timezone
+
+        try:
+            from zoneinfo import ZoneInfo
+            paris_tz = ZoneInfo('Europe/Paris')
+        except Exception:
+            try:
+                import pytz
+                paris_tz = pytz.timezone('Europe/Paris')
+            except Exception:
+                return Response({'error': 'timezone unavailable'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        source_marker_re = re.compile(r'THEFORK_SOURCE_ID\s*=\s*([A-Za-z0-9_\-]+)', re.IGNORECASE)
+        canceled_re = re.compile(r'cancel(l)?(ed)?|已取消|取消', re.IGNORECASE)
+        NAME_PREFIX = '(叉子订位)'
+
+        def parse_iso_to_paris(value):
+            if not value:
+                return None
+            s = str(value).strip()
+            if not s:
+                return None
+            if s.endswith('Z'):
+                s = s[:-1] + '+00:00'
+            try:
+                dt = datetime.datetime.fromisoformat(s)
+            except Exception:
+                return None
+            try:
+                if dt.tzinfo is None:
+                    if hasattr(paris_tz, 'localize'):
+                        dt = paris_tz.localize(dt)
+                    else:
+                        dt = dt.replace(tzinfo=paris_tz)
+                return dt.astimezone(paris_tz)
+            except Exception:
+                return None
+
+        def to_paris_date_str(dt):
+            return dt.strftime('%Y-%m-%d')
+
+        def minute_key(dt):
+            return dt.strftime('%Y-%m-%d %H:%M')
+
+        def strip_none(value):
+            if value is None:
+                return ''
+            return str(value).strip()
+
+        def eq_blank(a, b):
+            return strip_none(a) == strip_none(b)
+
+        def extract_source_id(team_message):
+            if not team_message:
+                return None
+            m = source_marker_re.search(str(team_message))
+            if not m:
+                return None
+            return (m.group(1) or '').strip() or None
+
+        def is_canceled_status(raw_status):
+            if not raw_status:
+                return False
+            return bool(canceled_re.search(str(raw_status).strip()))
+
+        def strip_name_prefix(prefixed):
+            v = strip_none(prefixed)
+            if v.startswith(NAME_PREFIX):
+                v = v[len(NAME_PREFIX):]
+            return v.strip()
+
+        def prefix_full_name_first_name(raw_first_name):
+            raw = strip_name_prefix(raw_first_name)
+            return f"{NAME_PREFIX} {raw}" if raw else NAME_PREFIX
+
+        def build_team_message(source_id, customer_note, restaurant_note, raw_status, extra=None):
+            parts = [f"[THEFORK_SYNC] THEFORK_SOURCE_ID={source_id}"]
+            if raw_status:
+                parts.append(f"theForkStatus={raw_status}")
+            if isinstance(extra, dict):
+                for k, v in extra.items():
+                    if v is None:
+                        continue
+                    parts.append(f"{k}={v}")
+            notes = []
+            for n in (customer_note, restaurant_note):
+                if n and str(n).strip():
+                    notes.append(str(n).strip())
+            if notes:
+                parts.append("note=" + " | ".join(notes))
+            return " ".join(parts)
+
+        def wix_headers():
+            return {
+                "Authorization": WIX_API_KEY,
+                "wix-site-id": WIX_SITE_ID,
+                "Content-Type": "application/json"
+            }
+
+        def fetch_wix_reservations_for_date(paris_date_str):
+            try:
+                target_date = datetime.datetime.strptime(paris_date_str, '%Y-%m-%d').date()
+            except Exception:
+                raise ValueError('invalid paris_date_str')
+            start_naive = datetime.datetime.combine(target_date, datetime.time.min)
+            end_naive = datetime.datetime.combine(target_date + datetime.timedelta(days=1), datetime.time.min)
+            try:
+                if hasattr(paris_tz, 'localize'):
+                    start_paris = paris_tz.localize(start_naive)
+                    end_paris = paris_tz.localize(end_naive)
+                else:
+                    start_paris = start_naive.replace(tzinfo=paris_tz)
+                    end_paris = end_naive.replace(tzinfo=paris_tz)
+                utc_tz = datetime.timezone.utc
+                start_utc = start_paris.astimezone(utc_tz)
+                end_utc = end_paris.astimezone(utc_tz)
+            except Exception as e:
+                raise ValueError(f"date tz conversion failed: {e}")
+
+            start_of_day = start_utc.isoformat().replace('+00:00', 'Z')
+            end_of_day = end_utc.isoformat().replace('+00:00', 'Z')
+
+            url = f"{WIX_BASE_URL}/reservations/query"
+            reservations = []
+            cursor = None
+            page_count = 0
+            while True:
+                page_count += 1
+                if page_count > 30:
+                    break
+                query = {
+                    "filter": {
+                        "$and": [
+                            {"details.startDate": {"$gte": start_of_day}},
+                            {"details.startDate": {"$lt": end_of_day}}
+                        ]
+                    }
+                }
+                payload_q = {"query": query}
+                if cursor:
+                    payload_q["query"]["cursorPaging"] = {"cursor": cursor}
+                page_resp = wix_requests.post(url, headers=wix_headers(), json=payload_q, timeout=25)
+                page_resp.raise_for_status()
+                page_data = page_resp.json()
+                for r in (page_data.get('reservations') or []):
+                    reservations.append(r)
+                paging = page_data.get('pagingMetadata') or {}
+                nxt = ((paging.get('cursors') or {}).get('next'))
+                if not paging.get('hasNext') or not nxt:
+                    break
+                cursor = nxt
+            seen = set()
+            uniq = []
+            for r in reservations:
+                rid = r.get('id')
+                if rid and rid in seen:
+                    continue
+                if rid:
+                    seen.add(rid)
+                uniq.append(r)
+            return uniq
+
+        def wix_create_reservation(normalized):
+            location_id = normalized.get('reservationLocationId') or WIX_DEFAULT_LOCATION_ID
+            reservee = {
+                "firstName": normalized.get('firstName') or '',
+                "lastName": normalized.get('lastName') or '',
+            }
+            email_val = normalized.get('email')
+            phone_val = normalized.get('phone')
+            if email_val is None:
+                reservee['email'] = ''
+            else:
+                reservee['email'] = email_val
+            if phone_val is None:
+                reservee['phone'] = ''
+            else:
+                reservee['phone'] = phone_val
+
+            payload = {
+                "reservation": {
+                    "details": {
+                        "partySize": normalized['partySize'],
+                        "startDate": normalized['startDate'],
+                        "reservationLocationId": location_id,
+                        "locationId": location_id,
+                    },
+                    "reservee": reservee,
+                    "teamMessage": normalized.get('teamMessage'),
+                    "status": normalize_wix_reservation_status(normalized.get('status'), default='RESERVED'),
+                }
+            }
+            if normalized.get('endDate'):
+                payload['reservation']['details']['endDate'] = normalized['endDate']
+            url = f"{WIX_BASE_URL}/reservations"
+            resp = wix_requests.post(url, headers=wix_headers(), json=payload, timeout=25)
+            resp.raise_for_status()
+            return resp.status_code, resp.json()
+
+        def wix_patch_reservation(wix_id, *, start_date=None, end_date=None, status=None, team_message=None, party_size=None, reservee_first=None, reservee_last_raw=None, email=None, phone=None):
+            kwargs = {k: v for k, v in locals().items() if k not in ('wix_id', 'kwargs')}
+            if all(v is None for k, v in kwargs.items() if k != 'wix_id'):
+                return None, None
+            get_url = f"{WIX_BASE_URL}/reservations/{wix_id}"
+            get_resp = wix_requests.get(get_url, headers={k: v for k, v in wix_headers().items() if k != 'Content-Type'}, timeout=25)
+            get_resp.raise_for_status()
+            current = get_resp.json()
+            reservation_data = current.get('reservation', current)
+            revision = reservation_data.get('revision')
+            update_payload = {"reservation": {"revision": revision}}
+
+            need_details = (start_date is not None) or (end_date is not None) or (party_size is not None)
+            if need_details:
+                details = {}
+                if start_date is not None:
+                    details['startDate'] = start_date
+                if end_date is not None:
+                    details['endDate'] = end_date
+                if party_size is not None:
+                    details['partySize'] = int(party_size)
+                update_payload['reservation']['details'] = details
+
+            need_reservee = any(v is not None for v in (reservee_first, reservee_last_raw, email, phone))
+            if need_reservee:
+                old_reservee = reservation_data.get('reservee') or {}
+                reservee = dict(old_reservee)
+                if reservee_first is not None:
+                    reservee['firstName'] = prefix_full_name_first_name(reservee_first)
+                if reservee_last_raw is not None:
+                    reservee['lastName'] = strip_name_prefix(reservee_last_raw)
+                if email is not None:
+                    reservee['email'] = '' if email is None else email
+                if phone is not None:
+                    reservee['phone'] = '' if phone is None else phone
+                update_payload['reservation']['reservee'] = reservee
+
+            if status is not None:
+                update_payload['reservation']['status'] = status
+            if team_message is not None:
+                update_payload['reservation']['teamMessage'] = team_message
+
+            patch_url = f"{WIX_BASE_URL}/reservations/{wix_id}"
+            patch_resp = wix_requests.patch(patch_url, headers=wix_headers(), json=update_payload, timeout=25)
+            patch_resp.raise_for_status()
+            return patch_resp.status_code, patch_resp.json()
+
+        payload = request.data
+        if payload is None or payload == '':
+            return Response({'error': 'Empty body'}, status=status.HTTP_400_BAD_REQUEST)
+
+        raw_items = None
+        if isinstance(payload, dict):
+            if isinstance(payload.get('reservations'), list):
+                raw_items = payload['reservations']
+            elif isinstance(payload.get('data'), dict) and isinstance((payload.get('data') or {}).get('dayReservations'), list):
+                raw_items = payload['data']['dayReservations']
+            elif 'id' in payload or 'mealDate' in payload:
+                raw_items = [payload]
+        elif isinstance(payload, list):
+            raw_items = payload
+
+        if not isinstance(raw_items, list):
+            return Response({'error': 'payload must include reservations[] or raw TheFork dayReservations or single reservation object'}, status=status.HTTP_400_BAD_REQUEST)
+
+        normalized_items = []
+        validation_errors = []
+        for idx, r in enumerate(raw_items):
+            if not isinstance(r, dict):
+                validation_errors.append({'index': idx, 'error': 'item must be object'})
+                continue
+            customer = r.get('customer') if isinstance(r.get('customer'), dict) else {}
+            source_id = (r.get('id') or '').strip() if isinstance(r.get('id'), str) else ''
+            if not source_id:
+                validation_errors.append({'index': idx, 'error': 'missing source id (id)'})
+                continue
+
+            meal_date_raw = r.get('mealDate')
+            start_dt = parse_iso_to_paris(meal_date_raw)
+            if start_dt is None:
+                validation_errors.append({'index': idx, 'sourceId': source_id, 'error': 'invalid mealDate/startDate'})
+                continue
+
+            end_date_raw = r.get('mealEndAt')
+            end_dt = parse_iso_to_paris(end_date_raw) if end_date_raw else None
+
+            try:
+                party_size = int(r.get('partySize') or 0)
+            except Exception:
+                party_size = 0
+            if party_size <= 0:
+                validation_errors.append({'index': idx, 'sourceId': source_id, 'error': 'invalid partySize'})
+                continue
+
+            first_name_raw = strip_name_prefix(customer.get('firstName') or r.get('firstName') or '')
+            last_name_raw = strip_name_prefix(customer.get('lastName') or r.get('lastName') or '')
+            first_name_prefixed = prefix_full_name_first_name(first_name_raw)
+            email_raw = (customer.get('email') or r.get('email'))
+            phone_raw = (customer.get('phone') or r.get('phone'))
+
+            raw_status = r.get('status')
+            canceled_flag = is_canceled_status(raw_status)
+            target_status = normalize_wix_reservation_status(raw_status, default='RESERVED')
+            if canceled_flag:
+                target_status = 'CANCELED'
+
+            customer_note = customer.get('notes') if isinstance(customer, dict) else None
+            if customer_note is None:
+                customer_note = r.get('customerNote')
+            restaurant_note = r.get('restaurantNote')
+
+            cancellation_ts = None
+            if isinstance(r.get('cancellation'), dict):
+                cancellation_ts = (r['cancellation'].get('timestamp') or '').strip() or None
+
+            normalized_items.append({
+                'index': idx,
+                'sourceId': source_id,
+                'startDate': (meal_date_raw if isinstance(meal_date_raw, str) else start_dt.isoformat()),
+                'endDate': (end_date_raw if isinstance(end_date_raw, str) else (end_dt.isoformat() if end_dt else None)),
+                'startDt': start_dt,
+                'endDt': end_dt,
+                'partySize': party_size,
+                'firstName': first_name_raw,
+                'firstNamePrefixed': first_name_prefixed,
+                'lastNameRaw': last_name_raw,
+                'email': email_raw,
+                'phone': phone_raw,
+                'status': target_status,
+                'isCanceled': canceled_flag,
+                'rawStatus': raw_status,
+                'cancellationTs': cancellation_ts,
+                'reservationLocationId': r.get('reservationLocationId') or r.get('locationId') or WIX_DEFAULT_LOCATION_ID,
+                'customerNote': customer_note,
+                'restaurantNote': restaurant_note,
+            })
+
+        if validation_errors:
+            return Response({'error': 'invalid reservations', 'validationErrors': validation_errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        date_to_wix_cache = {}
+        results = []
+        summary = {
+            'total': len(normalized_items),
+            'created': 0,
+            'patched': 0,
+            'status_patched': 0,
+            'info_patched': 0,
+            'skipped': 0,
+            'failed': 0,
+            'ambiguous': 0
+        }
+
+        for item in normalized_items:
+            idx = item['index']
+            source_id = item['sourceId']
+            try:
+                date_str = to_paris_date_str(item['startDt'])
+                wix_list = date_to_wix_cache.get(date_str)
+                if wix_list is None:
+                    wix_list = fetch_wix_reservations_for_date(date_str)
+                    date_to_wix_cache[date_str] = wix_list
+
+                matched = []
+                for wr in wix_list:
+                    wr_res = wr.get('reservation', wr)
+                    wr_team = wr_res.get('teamMessage')
+                    wr_id = extract_source_id(wr_team)
+                    if wr_id and wr_id == source_id:
+                        matched.append(wr)
+
+                if len(matched) > 1:
+                    summary['ambiguous'] += 1
+                    results.append({
+                        'index': idx,
+                        'sourceId': source_id,
+                        'action': 'ambiguous',
+                        'matchedWixIds': [w.get('id') or (w.get('reservation') or {}).get('id') for w in matched]
+                    })
+                    continue
+
+                if len(matched) == 0:
+                    if item['isCanceled']:
+                        summary['skipped'] += 1
+                        results.append({
+                            'index': idx,
+                            'sourceId': source_id,
+                            'action': 'skipped_canceled',
+                            'message': 'TheFork reservation already canceled; skipped creation on Wix'
+                        })
+                        continue
+                    team_msg = build_team_message(
+                        source_id,
+                        item['customerNote'],
+                        item['restaurantNote'],
+                        item['rawStatus']
+                    )
+                    create_item = dict(item)
+                    create_item['teamMessage'] = team_msg
+                    create_item['firstName'] = item['firstNamePrefixed']
+                    create_item['lastName'] = item['lastNameRaw']
+                    try:
+                        status_code, resp_data = wix_create_reservation(create_item)
+                        created_res = resp_data.get('reservation', resp_data) if isinstance(resp_data, dict) else {}
+                        wix_id = resp_data.get('id') or created_res.get('id')
+                        summary['created'] += 1
+                        results.append({
+                            'index': idx,
+                            'sourceId': source_id,
+                            'action': 'created',
+                            'wixReservationId': wix_id,
+                            'startDate': item['startDate'],
+                            'endDate': item['endDate'],
+                            'partySize': item['partySize'],
+                            'firstName': item['firstNamePrefixed'],
+                            'lastName': item['lastNameRaw'],
+                            'email': item['email'],
+                            'phone': item['phone'],
+                            'statusWrittenToWix': item['status'],
+                        })
+                    except wix_requests.exceptions.HTTPError as e:
+                        summary['failed'] += 1
+                        detail = str(e)
+                        try:
+                            if e.response is not None:
+                                detail = f"HTTP {e.response.status_code} {e.response.text[:800]}"
+                        except Exception:
+                            pass
+                        results.append({'index': idx, 'sourceId': source_id, 'action': 'failed', 'error': f'create failed: {detail}'})
+                    except Exception as e:
+                        summary['failed'] += 1
+                        results.append({'index': idx, 'sourceId': source_id, 'action': 'failed', 'error': f'create failed: {e}'})
+                    continue
+
+                wix_res = matched[0]
+                wix_res_data = wix_res.get('reservation', wix_res)
+                wix_id = wix_res.get('id') or wix_res_data.get('id')
+                wix_details = wix_res_data.get('details') or {}
+                wix_reservee = wix_res_data.get('reservee') or {}
+                wix_start_dt = parse_iso_to_paris(wix_details.get('startDate'))
+                wix_end_dt = parse_iso_to_paris(wix_details.get('endDate'))
+                wix_current_status = wix_res_data.get('status')
+                wix_current_team = wix_res_data.get('teamMessage')
+
+                try:
+                    wix_party_size = int(wix_details.get('partySize') or 0)
+                except Exception:
+                    wix_party_size = None
+
+                wix_first = wix_reservee.get('firstName')
+                wix_last = wix_reservee.get('lastName')
+                wix_first_raw = strip_name_prefix(wix_first)
+                wix_last_raw = strip_name_prefix(wix_last)
+                wix_email = wix_reservee.get('email')
+                wix_phone = wix_reservee.get('phone')
+
+                same_start = (wix_start_dt is not None and minute_key(wix_start_dt) == minute_key(item['startDt']))
+                if item['endDt'] is None:
+                    # TheFork did not provide an end time, so ignore Wix endDate drift.
+                    need_time_patch = not same_start
+                else:
+                    if wix_end_dt is not None and minute_key(item['endDt']) == minute_key(wix_end_dt):
+                        same_end = True
+                    else:
+                        same_end = False
+                    need_time_patch = not (same_start and same_end)
+
+                if item['isCanceled']:
+                    desired_status = 'CANCELED'
+                else:
+                    desired_status = normalize_wix_reservation_status(item['rawStatus'], default='RESERVED')
+                need_status_patch = (str(wix_current_status).strip().upper() != str(desired_status).strip().upper())
+
+                desired_team_msg = build_team_message(
+                    source_id,
+                    item['customerNote'],
+                    item['restaurantNote'],
+                    item['rawStatus'],
+                    extra={"cancellationAt": item['cancellationTs']} if item['isCanceled'] and item['cancellationTs'] else None
+                )
+                need_team_patch = (str(wix_current_team or '') != str(desired_team_msg or ''))
+
+                patch_party_size = None
+                patch_first = None
+                patch_last_raw = None
+                patch_email = None
+                patch_phone = None
+                info_changed = False
+
+                if wix_party_size is None or wix_party_size != int(item['partySize']):
+                    patch_party_size = int(item['partySize'])
+                    info_changed = True
+                if not eq_blank(wix_first, item['firstNamePrefixed']):
+                    patch_first = (item['firstName'] or '')
+                    info_changed = True
+                if not eq_blank(wix_last, item['lastNameRaw']):
+                    patch_last_raw = item['lastNameRaw']
+                    info_changed = True
+                if not eq_blank(wix_email, item['email']):
+                    patch_email = item['email']
+                    info_changed = True
+                if not eq_blank(wix_phone, item['phone']):
+                    patch_phone = item['phone']
+                    info_changed = True
+
+                if not (need_time_patch or need_status_patch or need_team_patch or info_changed):
+                    summary['skipped'] += 1
+                    results.append({
+                        'index': idx,
+                        'sourceId': source_id,
+                        'action': 'skipped',
+                        'wixReservationId': wix_id,
+                        'startDate': item['startDate'],
+                        'endDate': item['endDate'],
+                        'wixStatus': wix_current_status,
+                        'desiredStatus': desired_status,
+                    })
+                    continue
+
+                try:
+                    status_code, patch_resp = wix_patch_reservation(
+                        wix_id,
+                        start_date=item['startDate'] if need_time_patch else None,
+                        end_date=item['endDate'] if need_time_patch and item['endDate'] else None,
+                        status=desired_status if need_status_patch else None,
+                        team_message=desired_team_msg if need_team_patch else None,
+                        party_size=patch_party_size,
+                        reservee_first=patch_first,
+                        reservee_last_raw=patch_last_raw,
+                        email=patch_email,
+                        phone=patch_phone,
+                    )
+                    actions = []
+                    if need_time_patch:
+                        actions.append('time')
+                        summary['patched'] += 1
+                    if need_status_patch:
+                        actions.append('status')
+                        summary['status_patched'] += 1
+                    if info_changed:
+                        if patch_party_size is not None:
+                            actions.append('partySize')
+                        if patch_first is not None:
+                            actions.append('firstName')
+                        if patch_last_raw is not None:
+                            actions.append('lastName')
+                        if patch_email is not None:
+                            actions.append('email')
+                        if patch_phone is not None:
+                            actions.append('phone')
+                        summary['info_patched'] += 1
+                    if need_team_patch:
+                        actions.append('teamMessage')
+                    results.append({
+                        'index': idx,
+                        'sourceId': source_id,
+                        'action': 'patched',
+                        'patchedFields': actions,
+                        'wixReservationId': wix_id,
+                        'oldStartDate': (wix_start_dt.isoformat() if wix_start_dt else None),
+                        'oldEndDate': (wix_end_dt.isoformat() if wix_end_dt else None),
+                        'oldStatus': wix_current_status,
+                        'oldPartySize': wix_party_size,
+                        'oldFirstName': wix_first,
+                        'oldLastName': wix_last,
+                        'oldFirstNameRaw': wix_first_raw,
+                        'oldLastNameRaw': wix_last_raw,
+                        'oldEmail': wix_email,
+                        'oldPhone': wix_phone,
+                        'newStartDate': item['startDate'],
+                        'newEndDate': item['endDate'],
+                        'newStatus': desired_status,
+                        'newPartySize': item['partySize'],
+                        'newFirstName': item['firstNamePrefixed'],
+                        'newLastName': item['lastNameRaw'],
+                        'newFirstNameRaw': item['firstName'],
+                        'newLastNameRaw': item['lastNameRaw'],
+                        'newEmail': item['email'],
+                        'newPhone': item['phone'],
+                    })
+                except wix_requests.exceptions.HTTPError as e:
+                    summary['failed'] += 1
+                    detail = str(e)
+                    try:
+                        if e.response is not None:
+                            detail = f"HTTP {e.response.status_code} {e.response.text[:800]}"
+                    except Exception:
+                        pass
+                    results.append({'index': idx, 'sourceId': source_id, 'action': 'failed', 'error': f'patch failed: {detail}'})
+                except Exception as e:
+                    summary['failed'] += 1
+                    results.append({'index': idx, 'sourceId': source_id, 'action': 'failed', 'error': f'patch failed: {e}'})
+            except wix_requests.exceptions.HTTPError as e:
+                summary['failed'] += 1
+                detail = str(e)
+                try:
+                    if e.response is not None:
+                        detail = f"HTTP {e.response.status_code} {e.response.text[:800]}"
+                except Exception:
+                    pass
+                results.append({'index': idx, 'sourceId': item.get('sourceId'), 'action': 'failed', 'error': detail})
+            except Exception as e:
+                summary['failed'] += 1
+                results.append({'index': idx, 'sourceId': item.get('sourceId'), 'action': 'failed', 'error': str(e)})
+
+        return Response({
+            'processedAt': (dj_timezone.now().astimezone(paris_tz).isoformat() if paris_tz else dj_timezone.now().isoformat()),
+            'summary': summary,
+            'results': results
+        }, status=status.HTTP_200_OK)
 
 
 class TestUberInView(APIView):
@@ -1272,6 +1957,26 @@ class TestUberInView(APIView):
             import pytz
             paris_tz = pytz.timezone('Europe/Paris')
 
+        def parse_iso_dt_to_paris(value):
+            if not value:
+                return None
+            s = str(value).strip()
+            if not s:
+                return None
+            if s.endswith('Z'):
+                s = s[:-1] + '+00:00'
+            try:
+                dt = datetime.datetime.fromisoformat(s)
+            except Exception:
+                return None
+            try:
+                if dt.tzinfo is None:
+                    dt = paris_tz.localize(dt) if hasattr(paris_tz, 'localize') else dt.replace(tzinfo=paris_tz)
+                dt_paris = dt.astimezone(paris_tz)
+            except Exception:
+                return None
+            return dt_paris
+
         def enqueue_print(ticket_id, order_number_str, base_print_id):
             try:
                 print_id = str(base_print_id)
@@ -1306,13 +2011,24 @@ class TestUberInView(APIView):
                 continue
 
             order_number_str = str(order_number)
-            if DataTicket.objects.filter(client_name__endswith=order_number_str).exists():
+            dup_q = Q(client_name__endswith=order_number_str) | Q(client_name__contains=f"- {order_number_str} - ")
+            if DataTicket.objects.filter(dup_q).exists():
                 skipped_count += 1
                 results.append({"status": "skipped", "orderNumber": order_number_str, "reason": "duplicate"})
                 continue
 
             customer_name = str(o.get('customerName') or '').strip()
             client_name = f"{customer_name} - {order_number_str}" if customer_name else f"- {order_number_str}"
+
+            needs_cutlery = o.get('needsCutlery')
+            if needs_cutlery is True:
+                client_name = f"{client_name} - √"
+            elif needs_cutlery is False:
+                client_name = f"{client_name} - X"
+
+            created_dt = parse_iso_dt_to_paris(o.get('createdDate'))
+            if created_dt is None and o.get('createdDate'):
+                print(f"[UBER_IN] invalid createdDate={o.get('createdDate')}, fallback to now for orderNumber={order_number_str}")
 
             now_utc = datetime.datetime.now(datetime.timezone.utc)
             ms = int(now_utc.timestamp() * 1000)
@@ -1321,16 +2037,18 @@ class TestUberInView(APIView):
                 ms += 1
                 ticket_id = 'T' + str(ms)
 
-            pickup_dt = datetime.datetime.fromtimestamp(ms / 1000, paris_tz)
-            ticket_time = pickup_dt.strftime('%Y%m%d%H%M%S')
-            pickup_time_str = f"{pickup_dt.year}{pickup_dt.month:02d}{pickup_dt.day}{pickup_dt.hour:02d}{pickup_dt.minute:02d}{pickup_dt.second:02d}"
+            pickup_dt_source = created_dt if created_dt is not None else datetime.datetime.fromtimestamp(ms / 1000, paris_tz)
+            ticket_time_source = datetime.datetime.fromtimestamp(ms / 1000, paris_tz)
+            ticket_time = ticket_time_source.strftime('%Y%m%d%H%M%S')
+            pickup_time_str = f"{pickup_dt_source.year}{pickup_dt_source.month:02d}{pickup_dt_source.day:02d}{pickup_dt_source.hour:02d}{pickup_dt_source.minute:02d}{pickup_dt_source.second:02d}"
 
             items = o.get('items') or []
             if not isinstance(items, list):
                 items = []
 
             with transaction.atomic():
-                if DataTicket.objects.filter(client_name__endswith=order_number_str).exists():
+                dup_q = Q(client_name__endswith=order_number_str) | Q(client_name__contains=f"- {order_number_str} - ")
+                if DataTicket.objects.filter(dup_q).exists():
                     skipped_count += 1
                     results.append({"status": "skipped", "orderNumber": order_number_str, "reason": "duplicate"})
                     continue
@@ -1339,6 +2057,9 @@ class TestUberInView(APIView):
                 table_num = f"L{next_delivery_n}"
 
                 ticket_price = parse_price(o.get('totalPrice'))
+                ticket_note = o.get('orderNotes')
+                if ticket_note is not None:
+                    ticket_note = str(ticket_note).strip()
                 ticket = DataTicket.objects.create(
                     ticket_id=ticket_id,
                     ticket_time=ticket_time,
@@ -1347,6 +2068,7 @@ class TestUberInView(APIView):
                     type=2,
                     table_num=table_num,
                     client_name=client_name,
+                    ticket_note=ticket_note or None,
                     delivery_platform_id=3,
                     ticket_price=ticket_price,
                 )
@@ -1483,6 +2205,100 @@ class TestWixAutoSyncSwitchView(APIView):
         return self.post(request)
 
 
+class TestPatchPickupTimeView(APIView):
+    def post(self, request):
+        import datetime
+        from django.db.models import Q
+        from django.db import transaction
+
+        try:
+            from zoneinfo import ZoneInfo
+            paris_tz = ZoneInfo('Europe/Paris')
+        except Exception:
+            try:
+                import pytz
+                paris_tz = pytz.timezone('Europe/Paris')
+            except Exception:
+                return Response({'error': 'timezone unavailable'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        payload = request.data
+        if payload is None or payload == '':
+            return Response({'error': 'Empty body'}, status=status.HTTP_400_BAD_REQUEST)
+        if not isinstance(payload, dict):
+            return Response({'error': 'payload must be an object'}, status=status.HTTP_400_BAD_REQUEST)
+
+        order_number = payload.get('orderNumber')
+        if order_number is None or str(order_number).strip() == '':
+            return Response({'error': 'Missing orderNumber'}, status=status.HTTP_400_BAD_REQUEST)
+        order_number_str = str(order_number)
+
+        pick_up_time_raw = payload.get('pickUpTime')
+        if not pick_up_time_raw:
+            return Response({'error': 'Missing pickUpTime'}, status=status.HTTP_400_BAD_REQUEST)
+
+        s = str(pick_up_time_raw).strip()
+        if s.endswith('Z'):
+            s = s[:-1] + '+00:00'
+        try:
+            pick_up_dt = datetime.datetime.fromisoformat(s)
+        except Exception as e:
+            return Response({'error': f'Invalid pickUpTime: {e}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            if pick_up_dt.tzinfo is None:
+                pick_up_dt = paris_tz.localize(pick_up_dt) if hasattr(paris_tz, 'localize') else pick_up_dt.replace(tzinfo=paris_tz)
+            pick_up_paris = pick_up_dt.astimezone(paris_tz)
+        except Exception as e:
+            return Response({'error': f'pickUpTime timezone conversion failed: {e}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        pickup_time_str = (
+            f"{pick_up_paris.year}"
+            f"{pick_up_paris.month:02d}"
+            f"{pick_up_paris.day:02d}"
+            f"{pick_up_paris.hour:02d}"
+            f"{pick_up_paris.minute:02d}"
+            f"{pick_up_paris.second:02d}"
+        )
+
+        dup_q = Q(client_name__endswith=order_number_str) | Q(client_name__contains=f"- {order_number_str} - ")
+
+        try:
+            with transaction.atomic():
+                tickets = list(DataTicket.objects.filter(dup_q).order_by('-ticket_time'))
+                if not tickets:
+                    return Response(
+                        {'error': f'ticket not found for orderNumber={order_number_str}',
+                         'orderNumber': order_number_str},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+                if len(tickets) > 1:
+                    ticket_ids = [t.ticket_id for t in tickets]
+                    return Response(
+                        {'error': f'multiple tickets matched orderNumber={order_number_str}',
+                         'orderNumber': order_number_str,
+                         'matchedTicketIds': ticket_ids},
+                        status=status.HTTP_409_CONFLICT
+                    )
+                ticket = tickets[0]
+                old_value = ticket.ticket_pickup_time
+                ticket.ticket_pickup_time = pickup_time_str
+                ticket.save(update_fields=['ticket_pickup_time'])
+        except Exception as e:
+            return Response(
+                {'error': f'update failed: {e}', 'orderNumber': order_number_str},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        return Response({
+            'status': 'updated',
+            'orderNumber': order_number_str,
+            'ticket_id': ticket.ticket_id,
+            'client_name': ticket.client_name,
+            'old_ticket_pickup_time': old_value,
+            'new_ticket_pickup_time': pickup_time_str,
+        }, status=status.HTTP_200_OK)
+
+
 class WixReservationDetailView(APIView):
     def get(self, request, pk):
         url = f"{WIX_BASE_URL}/reservations/{pk}?fieldsets=FULL"
@@ -1555,7 +2371,17 @@ class WixReservationDetailView(APIView):
         if 'teamMessage' in request.data:
             update_payload['reservation']['teamMessage'] = request.data['teamMessage']
         if 'status' in request.data:
-            update_payload['reservation']['status'] = request.data['status']
+            normalized_status = normalize_wix_reservation_status(request.data['status'])
+            if normalized_status is None:
+                return Response(
+                    {
+                        "error": "Invalid reservation status",
+                        "received": request.data['status'],
+                        "allowed": sorted(WIX_VALID_RESERVATION_STATUSES),
+                    },
+                    status=400
+                )
+            update_payload['reservation']['status'] = normalized_status
 
         if not update_payload['reservation']['details']:
             del update_payload['reservation']['details']
@@ -1861,4 +2687,3 @@ class WixOnlineOrdersView(APIView):
                 except:
                     details = e.response.text
             return Response({"error": details}, status=status_code)
-

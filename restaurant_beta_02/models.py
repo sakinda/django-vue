@@ -37,6 +37,7 @@ class DataDish(models.Model):
     drecipe = models.CharField(max_length=512, blank=True, null=True)
     dondelete = models.IntegerField(default=0)
     dfrname = models.CharField(max_length=255, default=" ")
+    dmininame = models.CharField(verbose_name='菜品简称', max_length=255, default=" ")
 
     class Meta:
         managed = True

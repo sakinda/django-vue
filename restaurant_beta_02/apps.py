@@ -28,30 +28,14 @@ class RestaurantBeta02Config(AppConfig):
             print('[WIX_SYNC] APScheduler not available; wix auto-sync disabled')
             return
 
-        # 该文件是 Django 应用 restaurant_beta_02 的 AppConfig。
-        # 它在 Django 启动时通过 ready() 钩子完成以下工作：
-        # 1. 利用 /tmp/restaurant_beta_02_wix_sync.lock 文件实现单实例锁，防止多个进程重复运行后台任务。
-        # 2. 若拿到锁，则启动 APScheduler，每分钟自动调用 sync_once()：
-        #    - 读取本地标志文件或 settings 决定是否启用同步。
-        #    - 调用 WIX 电商 API 拉取当日 17:00 之后的新订单（排除“订位”类商品）。
-        #    - 把订单写入本系统的 DataTicket（小票）与 DataOrder（订单行项目），
-        #      实现外卖平台订单到内部 POS 的自动同步。
-        lock_path = '/tmp/restaurant_beta_02_wix_sync.lock'
-        try:
-            if os.path.exists(lock_path):
-                try:
-                    old_pid = int((open(lock_path).read() or '').strip() or 0)
-                except Exception:
-                    old_pid = 0
-                if old_pid and old_pid != os.getpid():
-                    try:
-                        os.kill(old_pid, 0)
-                        return
-                    except Exception:
-                        pass
-            open(lock_path, 'w').write(str(os.getpid()))
-        except Exception:
+        # 不再依赖本地文件锁；每个 Django 进程都启动自己的 Wix 轮询。
+        # 这里只防止同一个进程内重复执行 ready() 时重复创建 scheduler。
+        pid = os.getpid()
+        started_pids = getattr(self.__class__, '_wix_sync_started_pids', set())
+        if pid in started_pids:
             return
+        started_pids.add(pid)
+        self.__class__._wix_sync_started_pids = started_pids
 
         from .models import DataDish, DataOrder, DataTicket, DataPrint
         from . import views as v
@@ -168,7 +152,7 @@ class RestaurantBeta02Config(AppConfig):
         state = {'enabled': enabled, 'enabled_source': source}
         print(
             f"[WIX_SYNC] init enabled={state['enabled']} source={state['enabled_source']} "
-            f"pid={os.getpid()} tz=Europe/Paris interval=60s flagFile={enabled_flag_path}"
+            f"pid={pid} tz=Europe/Paris interval=60s flagFile={enabled_flag_path}"
         )
 
         def enqueue_print(ticket_id, order_number_str, base_print_id):
@@ -360,6 +344,12 @@ class RestaurantBeta02Config(AppConfig):
                         lambda tid=ticket.ticket_id, on=order_number_str, bp=base_print_id: enqueue_print(tid, on, bp)
                     )
 
+        try:
+            sync_once()
+        except Exception as e:
+            print(f"[WIX_SYNC] initial sync failed: {e}")
+
         scheduler = BackgroundScheduler(timezone='Europe/Paris')
         scheduler.add_job(sync_once, 'interval', minutes=1, id='wix_sync', replace_existing=True, max_instances=1)
         scheduler.start()
+        self._wix_sync_scheduler = scheduler

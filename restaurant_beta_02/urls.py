@@ -70,4 +70,6 @@ urlpatterns = [
     url('^testwixonlineorders/(?P<mode>\d+)/$', views.WixOnlineOrdersView.as_view()),
     url('^testwixautosyncswitch/$', views.TestWixAutoSyncSwitchView.as_view()),
     url('^testuberin/$', views.TestUberInView.as_view()),
+    url('^testtheforksync/$', views.TestTheForkSyncView.as_view()),
+    url('^testpatchpickuptime/$', views.TestPatchPickupTimeView.as_view()),
 ]
